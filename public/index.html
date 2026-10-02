@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Ravenor</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>🏰 Ravenor</h1>
+      <div id="subtitle">Середньовічний світ</div>
+    </div>
+    <div id="player"></div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="stats">
+        <span>🪙 <b id="gold">0</b></span>
+        <span>🌾 <b id="food">0</b></span>
+        <span>⛓️ <b id="iron">0</b></span>
+        <span>👥 <b id="server">0/55</b></span>
+      </div>
+    </section>
+
+    <section class="map-wrap">
+      <div id="map" class="map"></div>
+    </section>
+
+    <section id="details" class="panel">
+      <h2>Вибери регіон</h2>
+      <p>Натисни на регіон, щоб переглянути інформацію.</p>
+    </section>
+  </main>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+const initData = tg?.initData || "";
+const headers = initData ? {"X-Telegram-Init-Data": initData} : {};
+
+let state;
+
+async function load() {
+  const r = await fetch("/api/state", {headers});
+  state = await r.json();
+  if (state.error) throw new Error(state.error);
+  render();
+}
+
+function render() {
+  const p = state.player;
+  document.getElementById("player").textContent = `⚔️ ${p.first_name} — ${p.role === "king" ? "Король" : "Лорд"}`;
+  document.getElementById("gold").textContent = p.gold.toLocaleString("uk-UA");
+  document.getElementById("food").textContent = p.food.toLocaleString("uk-UA");
+  document.getElementById("iron").textContent = p.iron.toLocaleString("uk-UA");
+  document.getElementById("server").textContent = `${state.serverPlayers}/55`;
+
+  const map = document.getElementById("map");
+  map.innerHTML = "";
+  state.regions.forEach(r => {
+    const b = document.createElement("button");
+    b.className = `region ${r.biome} ${r.owner_id === p.telegram_id ? "mine" : ""}`;
+    b.textContent = r.id;
+    b.onclick = () => showRegion(r);
+    map.appendChild(b);
+  });
+}
+
+function showRegion(r) {
+  const mine = r.owner_id === state.player.telegram_id;
+  document.getElementById("details").innerHTML = `
+    <h2>${r.name} <small>№${r.id}</small></h2>
+    <p>Біом: ${r.biome === "winter" ? "❄️ Зимовий" : "🌳 Звичайний"}</p>
+    <p>👥 Населення: ${r.population.toLocaleString("uk-UA")}</p>
+    <p>👑 Лорд: ${r.owner_name || "Немає"}</p>
+    ${!r.owner_id && !mine ? `<button onclick="claim(${r.id})">⚔️ Захопити</button>` : ""}
+  `;
+}
+
+async function claim(id) {
+  const r = await fetch("/api/claim", {
+    method:"POST",
+    headers: {"Content-Type":"application/json", ...headers},
+    body: JSON.stringify({regionId:id})
+  });
+  const data = await r.json();
+  if (!r.ok) return alert(data.error);
+  await load();
+  alert("Регіон захоплено!");
+}
+
+load().catch(e => {
+  document.getElementById("details").innerHTML = `<h2>Помилка</h2><p>${e.message}</p>`;
+});
+</script>
+</body>
+</html>

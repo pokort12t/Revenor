@@ -1,0 +1,37 @@
+* { box-sizing: border-box; }
+body {
+  margin:0; background:#17130f; color:#f4ead7;
+  font-family:system-ui,Arial,sans-serif;
+}
+header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px; background:#2a2018; border-bottom:1px solid #5c4935;
+  position:sticky; top:0; z-index:5;
+}
+h1,h2,p { margin:0 0 8px; }
+h1 { font-size:22px; }
+#subtitle { color:#bcae99; font-size:12px; }
+#player { font-size:13px; text-align:right; }
+main { max-width:900px; margin:auto; padding:10px; }
+.panel {
+  background:#241c16; border:1px solid #594735; border-radius:12px;
+  padding:12px; margin-bottom:10px;
+}
+.stats { display:flex; gap:12px; flex-wrap:wrap; font-size:13px; }
+.map-wrap { overflow:auto; background:#0d2832; border-radius:12px; padding:8px; }
+.map {
+  min-width:700px; display:grid; grid-template-columns:repeat(11,1fr);
+  gap:3px; aspect-ratio:11/5;
+}
+.region {
+  border:1px solid #3e3328; color:#fff; font-weight:800; font-size:14px;
+  border-radius:4px; cursor:pointer; background:#5e7549;
+}
+.region:hover { filter:brightness(1.2); }
+.region.winter { background:#8daec1; color:#10222c; }
+.region.mine { outline:3px solid #e0b34d; }
+button {
+  background:#8f642b; color:white; border:0; padding:9px 12px;
+  border-radius:8px; font-weight:700;
+}
+small { color:#bcae99; }
