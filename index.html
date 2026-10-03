@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Ravenor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="logo">RAVENOR</div>
+      <div class="server">Ravenor I <span id="players">0/55</span></div>
+    </header>
+
+    <main>
+      <section id="serverScreen" class="screen">
+        <div class="panel">
+          <h1>СЕРВЕР</h1>
+          <div class="server-card">
+            <h2>Ravenor I</h2>
+            <p id="serverCount">0/55 гравців</p>
+            <button id="joinBtn">УВІЙТИ</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="gameScreen" class="screen hidden">
+        <div class="game-area">
+          <div class="map-wrap">
+            <img id="mapImage" src="images/map.png" alt="Карта Ravenor">
+            <div id="mapPlaceholder">ТУТ БУДЕ КАРТА RAVENOR<br><small>Замініть images/map.png на свою карту</small></div>
+          </div>
+
+          <div class="side-buttons">
+            <button data-panel="power">Влада</button>
+            <button data-panel="settlements">Поселення</button>
+            <button data-panel="people">Люди</button>
+            <button data-panel="mines">Шахти</button>
+            <button data-panel="gold">Золото</button>
+            <button data-panel="army">Армія</button>
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <button class="active" data-view="map">Карта</button>
+          <button data-view="region">Регіон</button>
+        </nav>
+
+        <div id="infoPanel" class="info-panel hidden">
+          <button id="closePanel" class="close">×</button>
+          <h2 id="panelTitle"></h2>
+          <div id="panelContent"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
