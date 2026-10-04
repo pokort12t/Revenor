@@ -271,3 +271,46 @@ button:active {
     padding: 9px 4px;
   }
   }
+
+.region-select {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px;
+  background: #17110c;
+}
+
+.region-select h2 {
+  color: #f4dfad;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.region-option {
+  width: min(360px, 90vw);
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  font-weight: bold;
+}
+
+.region-option span {
+  color: #9ee08f;
+  font-size: 13px;
+}
+
+.region-option:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.region-option:disabled span {
+  color: #e58b8b;
+}
