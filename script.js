@@ -383,7 +383,7 @@ function renderMap() {
   limitMap();
 
   mapImage.style.transform =
-    `translate(-50%, -50%)
+    `translate(-0%, -0%)
      translate(${mapX}px, ${mapY}px)
      scale(${scale})`;
 }
