@@ -4,33 +4,53 @@ const state = {
   region: localStorage.getItem("ravenor_region") || null
 };
 
+// Елементи сторінки
 const serverScreen = document.getElementById("serverScreen");
 const gameScreen = document.getElementById("gameScreen");
 const players = document.getElementById("players");
 const serverCount = document.getElementById("serverCount");
 const joinBtn = document.getElementById("joinBtn");
-
 const regionSelect = document.getElementById("regionSelect");
 
+// ==========================
+// ЛІЧИЛЬНИК ГРАВЦІВ
+// ==========================
+
 function updateCount() {
-  players.textContent = `${state.players}/55`;
-  serverCount.textContent = `${state.players}/55 гравців`;
+  if (players) {
+    players.textContent = `${state.players}/55`;
+  }
+
+  if (serverCount) {
+    serverCount.textContent = `${state.players}/55 гравців`;
+  }
 }
+
+// ==========================
+// ВІДКРИТТЯ ГРИ
+// ==========================
 
 function openGame() {
   serverScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
 
+  // Якщо регіон уже вибраний
   if (state.region) {
     regionSelect.classList.add("hidden");
   } else {
+    // Якщо регіон ще не вибраний
     regionSelect.classList.remove("hidden");
     updateRegionButtons();
   }
 }
 
+// ==========================
+// ВХІД НА СЕРВЕР
+// ==========================
+
 function joinGame() {
   if (!state.joined) {
+
     if (state.players >= 55) {
       alert("Сервер заповнений.");
       return;
@@ -39,8 +59,15 @@ function joinGame() {
     state.players++;
     state.joined = true;
 
-    localStorage.setItem("ravenor_players", state.players);
-    localStorage.setItem("ravenor_joined", "1");
+    localStorage.setItem(
+      "ravenor_players",
+      state.players
+    );
+
+    localStorage.setItem(
+      "ravenor_joined",
+      "1"
+    );
 
     updateCount();
   }
@@ -48,9 +75,8 @@ function joinGame() {
   openGame();
 }
 
-
 // ==========================
-// ВИБІР РЕГІОНУ
+// РЕГІОНИ
 // ==========================
 
 const regions = {
@@ -59,45 +85,69 @@ const regions = {
   erodaronis: "Еродароніс"
 };
 
+// Отримати зайняті регіони
 function getTakenRegions() {
   return JSON.parse(
     localStorage.getItem("ravenor_taken_regions") || "[]"
   );
 }
 
+// Оновити статус кнопок регіонів
 function updateRegionButtons() {
   const takenRegions = getTakenRegions();
 
   document.querySelectorAll(".region-option").forEach(button => {
+
     const region = button.dataset.region;
     const status = button.querySelector("span");
 
     if (takenRegions.includes(region)) {
+
       button.disabled = true;
-      status.textContent = "Зайнятий";
+
+      if (status) {
+        status.textContent = "Зайнятий";
+      }
+
     } else {
+
       button.disabled = false;
-      status.textContent = "Вільний";
+
+      if (status) {
+        status.textContent = "Вільний";
+      }
     }
   });
 }
 
+// ==========================
+// ВИБІР РЕГІОНУ
+// ==========================
+
 document.querySelectorAll(".region-option").forEach(button => {
+
   button.addEventListener("click", () => {
 
+    // Якщо регіон уже вибраний
     if (state.region) {
       return;
     }
 
     const region = button.dataset.region;
+
     const takenRegions = getTakenRegions();
 
+    // Перевірка, чи регіон уже зайнятий
     if (takenRegions.includes(region)) {
+
       alert("Цей регіон уже зайнятий.");
+
       updateRegionButtons();
+
       return;
     }
 
+    // Додаємо регіон до зайнятих
     takenRegions.push(region);
 
     localStorage.setItem(
@@ -105,6 +155,7 @@ document.querySelectorAll(".region-option").forEach(button => {
       JSON.stringify(takenRegions)
     );
 
+    // Зберігаємо регіон гравця
     state.region = region;
 
     localStorage.setItem(
@@ -112,66 +163,31 @@ document.querySelectorAll(".region-option").forEach(button => {
       region
     );
 
+    // Ховаємо вибір регіону
     regionSelect.classList.add("hidden");
 
     alert(
       `Ти обрав регіон: ${regions[region]}`
     );
   });
+
 });
 
+// ==========================
+// КНОПКА "УВІЙТИ"
+// ==========================
+
+joinBtn.addEventListener(
+  "click",
+  joinGame
+);
 
 // ==========================
-// КНОПКА ВХОДУ
+// ЗАПУСК
 // ==========================
-
-joinBtn.addEventListener("click", joinGame);
 
 updateCount();
 
 if (state.joined) {
   openGame();
-  }
-
-.region-select {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 20px;
-  background: #17110c;
-}
-
-.region-select h2 {
-  color: #f4dfad;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.region-option {
-  width: min(360px, 90vw);
-  min-height: 65px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 18px;
-  font-weight: bold;
-}
-
-.region-option span {
-  color: #9ee08f;
-  font-size: 13px;
-}
-
-.region-option:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.region-option:disabled span {
-  color: #e58b8b;
-}
+    }
