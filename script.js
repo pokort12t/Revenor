@@ -1,6 +1,7 @@
 const state = {
   players: Number(localStorage.getItem("ravenor_players") || 0),
-  joined: localStorage.getItem("ravenor_joined") === "1"
+  joined: localStorage.getItem("ravenor_joined") === "1",
+  region: localStorage.getItem("ravenor_region") || null
 };
 
 const serverScreen = document.getElementById("serverScreen");
@@ -8,10 +9,8 @@ const gameScreen = document.getElementById("gameScreen");
 const players = document.getElementById("players");
 const serverCount = document.getElementById("serverCount");
 const joinBtn = document.getElementById("joinBtn");
-const infoPanel = document.getElementById("infoPanel");
-const panelTitle = document.getElementById("panelTitle");
-const panelContent = document.getElementById("panelContent");
-const closePanel = document.getElementById("closePanel");
+
+const regionSelect = document.getElementById("regionSelect");
 
 function updateCount() {
   players.textContent = `${state.players}/55`;
@@ -21,6 +20,13 @@ function updateCount() {
 function openGame() {
   serverScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
+
+  if (state.region) {
+    regionSelect.classList.add("hidden");
+  } else {
+    regionSelect.classList.remove("hidden");
+    updateRegionButtons();
+  }
 }
 
 function joinGame() {
@@ -29,128 +35,100 @@ function joinGame() {
       alert("Сервер заповнений.");
       return;
     }
+
     state.players++;
     state.joined = true;
+
     localStorage.setItem("ravenor_players", state.players);
     localStorage.setItem("ravenor_joined", "1");
+
     updateCount();
   }
+
   openGame();
 }
 
+
+// ==========================
+// ВИБІР РЕГІОНУ
+// ==========================
+
+const regions = {
+  west: "Західна земля",
+  erenor: "Еренор",
+  erodaronis: "Еродароніс"
+};
+
+function getTakenRegions() {
+  return JSON.parse(
+    localStorage.getItem("ravenor_taken_regions") || "[]"
+  );
+}
+
+function updateRegionButtons() {
+  const takenRegions = getTakenRegions();
+
+  document.querySelectorAll(".region-option").forEach(button => {
+    const region = button.dataset.region;
+    const status = button.querySelector("span");
+
+    if (takenRegions.includes(region)) {
+      button.disabled = true;
+      status.textContent = "Зайнятий";
+    } else {
+      button.disabled = false;
+      status.textContent = "Вільний";
+    }
+  });
+}
+
+document.querySelectorAll(".region-option").forEach(button => {
+  button.addEventListener("click", () => {
+
+    if (state.region) {
+      return;
+    }
+
+    const region = button.dataset.region;
+    const takenRegions = getTakenRegions();
+
+    if (takenRegions.includes(region)) {
+      alert("Цей регіон уже зайнятий.");
+      updateRegionButtons();
+      return;
+    }
+
+    takenRegions.push(region);
+
+    localStorage.setItem(
+      "ravenor_taken_regions",
+      JSON.stringify(takenRegions)
+    );
+
+    state.region = region;
+
+    localStorage.setItem(
+      "ravenor_region",
+      region
+    );
+
+    regionSelect.classList.add("hidden");
+
+    alert(
+      `Ти обрав регіон: ${regions[region]}`
+    );
+  });
+});
+
+
+// ==========================
+// КНОПКА ВХОДУ
+// ==========================
+
 joinBtn.addEventListener("click", joinGame);
 
-const panels = {
-  king: [
-  "Король",
-  "Тут буде інформація про короля, якому присягнув твій лорд."
-],
-  power: ["Влада", "Тут буде інформація про твій статус лорда, короля та підлеглі регіони."],
-  settlements: ["Поселення", "Тут будуть міста та села твого регіону."],
-  people: ["Люди", "Тут будуть скарги та звернення підданих."],
-  mines: ["Шахти", "Тут будуть твої шахти та видобуток ресурсів."],
-  gold: ["Золото", "Тут буде баланс золота та економічна інформація."],
-  army: ["Армія", "Тут буде список армії: солдати, лицарі, кавалерія, лучники та облогова техніка."]
-};
-
-document.querySelectorAll("[data-panel]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const data = panels[btn.dataset.panel];
-    panelTitle.textContent = data[0];
-    panelContent.textContent = data[1];
-    infoPanel.classList.remove("hidden");
-  });
-});
-
-closePanel.addEventListener("click", () => infoPanel.classList.add("hidden"));
-
-document.querySelectorAll("[data-view]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll("[data-view]").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    panelTitle.textContent = btn.dataset.view === "map" ? "Карта" : "Регіон";
-    panelContent.textContent = btn.dataset.view === "map"
-      ? "На карті буде весь континент Ravenor."
-      : "Тут буде детальна інформація про твій регіон.";
-    infoPanel.classList.remove("hidden");
-  });
-});
-
-const mapImage = document.getElementById("mapImage");
-const mapPlaceholder = document.getElementById("mapPlaceholder");
-mapImage.addEventListener("load", () => {
-  mapImage.style.display = "block";
-  mapPlaceholder.style.display = "none";
-});
-mapImage.addEventListener("error", () => {
-  mapImage.style.display = "none";
-  mapPlaceholder.style.display = "grid";
-});
-
 updateCount();
-if (state.joined) openGame();
 
-
-// Титул гравця
-let playerTitle = "independentLord";
-const playerTitleElement = document.getElementById("playerTitle");
-
-const titleNames = {
-  independentLord: "Самостійний лорд",
-  lord: "Лорд",
-  king: "Король"
-};
-
-function updatePlayerTitle() {
-  playerTitleElement.textContent = titleNames[playerTitle];
-}
-
-updatePlayerTitle();
-// Варіанти:
-// "independentLord" — Самостійний лорд
-// "lord" — Лорд
-// "king" — Король
-
-const titleButton = document.getElementById("titleButton");
-
-function updateTitleButton() {
-  titleButton.innerHTML = "";
-
-  if (playerTitle === "independentLord") {
-    // У самостійного лорда немає кнопки
-    return;
+if (state.joined) {
+  openGame();
   }
-
-  if (playerTitle === "lord") {
-    // У лорда є кнопка "Король"
-    titleButton.innerHTML = `
-      <button class="title-button" data-panel="king">
-        Король
-      </button>
-    `;
-  }
-
-  if (playerTitle === "king") {
-    // У короля є кнопка "Влада"
-    titleButton.innerHTML = `
-      <button class="title-button" data-panel="power">
-        Влада
-      </button>
-    `;
-  }
-
-  document.querySelectorAll("#titleButton [data-panel]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const data = panels[btn.dataset.panel];
-
-      if (!data) return;
-
-      panelTitle.textContent = data[0];
-      panelContent.textContent = data[1];
-      infoPanel.classList.remove("hidden");
-    });
-  });
-}
-
-updateTitleButton();
-
