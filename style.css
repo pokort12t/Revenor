@@ -20,12 +20,39 @@ button:active { transform: translateY(1px); }
 
 .topbar {
   height: 58px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 0 14px;
+
   background: linear-gradient(#5a381d, #2d190e);
   border-bottom: 2px solid #b58a4b;
+}
+
+.logo {
+  justify-self: start;
+  font-weight: 900;
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+
+.player-title {
+  justify-self: center;
+
+  color: #f4dfad;
+  font-size: 17px;
+  font-weight: bold;
+  white-space: nowrap;
+
+  text-shadow: 2px 2px 3px #000;
+}
+
+.server {
+  justify-self: end;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
 
   .top-buttons,
 .side-buttons {
