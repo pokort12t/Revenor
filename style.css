@@ -324,3 +324,28 @@ button:active {
 .region-option:disabled span {
   color: #e58b8b;
 }
+
+/* Кнопки масштабу карти */
+
+.map-zoom {
+  position: absolute;
+
+  left: 10px;
+  bottom: 10px;
+
+  z-index: 150;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-zoom button {
+  width: 48px;
+  height: 48px;
+
+  padding: 0;
+
+  font-size: 25px;
+  font-weight: bold;
+}
