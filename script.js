@@ -1,3 +1,9 @@
+localStorage.removeItem("ravenor_players");
+localStorage.removeItem("ravenor_taken_regions");
+localStorage.removeItem("ravenor_joined");
+localStorage.removeItem("ravenor_region");
+
+
 localStorage.removeItem("ravenor_taken_regions");
 localStorage.removeItem("ravenor_joined");
 localStorage.removeItem("ravenor_region");
