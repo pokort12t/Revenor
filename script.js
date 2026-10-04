@@ -350,7 +350,7 @@ function limitMap() {
 
   } else {
 
-    mapX = 0;
+    mapX = 100;
 
   }
 
@@ -368,7 +368,7 @@ function limitMap() {
 
   } else {
 
-    mapY = 0;
+    mapY = -100;
 
   }
 }
