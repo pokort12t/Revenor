@@ -3,6 +3,19 @@ localStorage.removeItem("ravenor_taken_regions");
 localStorage.removeItem("ravenor_joined");
 localStorage.removeItem("ravenor_region");
 
+
+// ==========================
+// МЕЖІ РУХУ КАРТИ
+// ==========================
+
+const MAP_LIMITS = {
+  left: -500,
+  right: 500,
+  top: -300,
+  bottom: 300
+};
+
+
 // ==========================
 // СТАН ГРАВЦЯ
 // ==========================
