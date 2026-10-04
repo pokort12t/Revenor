@@ -1,10 +1,14 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #17110c;
   color: #f4dfad;
   font-family: Georgia, "Times New Roman", serif;
 }
+
 button {
   font: inherit;
   color: #f8e7b8;
@@ -15,16 +19,22 @@ button {
   cursor: pointer;
   box-shadow: inset 0 0 0 1px #2a170b, 0 3px 8px #0008;
 }
-button:active { transform: translateY(1px); }
-.hidden { display: none !important; }
 
+button:active {
+  transform: translateY(1px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Верхня панель */
 .topbar {
   height: 58px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 0 14px;
-
   background: linear-gradient(#5a381d, #2d190e);
   border-bottom: 2px solid #b58a4b;
 }
@@ -38,12 +48,10 @@ button:active { transform: translateY(1px); }
 
 .player-title {
   justify-self: center;
-
   color: #f4dfad;
   font-size: 14px;
   font-weight: bold;
   white-space: nowrap;
-
   text-shadow: 2px 2px 3px #000;
 }
 
@@ -53,21 +61,11 @@ button:active { transform: translateY(1px); }
   white-space: nowrap;
 }
 
-
-  .top-buttons,
-.side-buttons {
-    z-index: 100;
-    pointer-events: auto;
+/* Екран */
+.screen {
+  min-height: calc(100vh - 58px);
 }
 
-.map-wrap {
-    pointer-events: none;
-}
-}
-.logo { font-weight: 900; letter-spacing: 3px; }
-.server { font-size: 14px; }
-
-.screen { min-height: calc(100vh - 58px); }
 .panel {
   width: min(520px, 92vw);
   margin: 12vh auto;
@@ -77,34 +75,48 @@ button:active { transform: translateY(1px); }
   border-radius: 16px;
   text-align: center;
 }
-.panel h1 { margin-top: 0; letter-spacing: 4px; }
+
+.panel h1 {
+  margin-top: 0;
+  letter-spacing: 4px;
+}
+
 .server-card {
   padding: 25px;
   background: #3a2414;
   border: 1px solid #a77c43;
   border-radius: 12px;
 }
-.server-card h2 { margin: 0 0 8px; }
 
+.server-card h2 {
+  margin: 0 0 8px;
+}
+
+/* Ігрова зона */
 .game-area {
   position: relative;
   min-height: calc(100vh - 114px);
   overflow: hidden;
   background: #6e7651;
 }
+
+/* Карта */
 .map-wrap {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
   overflow: auto;
+  pointer-events: none;
 }
+
 #mapImage {
   display: none;
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
+
 #mapPlaceholder {
   width: 92%;
   height: 82%;
@@ -120,36 +132,47 @@ button:active { transform: translateY(1px); }
   text-shadow: 2px 2px #000;
 }
 
+/* Кнопки зверху */
 .top-buttons {
   position: absolute;
   top: 15px;
   left: 50%;
   transform: translateX(-50%);
+
   display: flex;
   gap: 10px;
-  z-index: 5;
+
+  z-index: 100;
+  pointer-events: auto;
 }
 
 .top-buttons button {
   width: 130px;
 }
 
+/* Кнопки збоку */
 .side-buttons {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+
   display: flex;
   flex-direction: column;
   gap: 10px;
+
   width: 130px;
-  z-index: 5;
+
+  z-index: 100;
+  pointer-events: auto;
 }
 
 .side-buttons button {
   width: 130px;
   padding: 10px 6px;
 }
+
+/* Нижня навігація */
 .bottom-nav {
   height: 56px;
   display: flex;
@@ -159,9 +182,16 @@ button:active { transform: translateY(1px); }
   background: #2d190e;
   border-top: 2px solid #b58a4b;
 }
-.bottom-nav button { min-width: 120px; }
-.bottom-nav .active { background: linear-gradient(#9b6b32, #5c381a); }
 
+.bottom-nav button {
+  min-width: 120px;
+}
+
+.bottom-nav .active {
+  background: linear-gradient(#9b6b32, #5c381a);
+}
+
+/* Інформаційне вікно */
 .info-panel {
   position: fixed;
   right: 10px;
@@ -172,9 +202,13 @@ button:active { transform: translateY(1px); }
   border: 2px solid #b58a4b;
   border-radius: 14px;
   box-shadow: 0 8px 30px #000b;
-  z-index: 10;
+  z-index: 200;
 }
-.info-panel h2 { margin-top: 0; }
+
+.info-panel h2 {
+  margin-top: 0;
+}
+
 .close {
   position: absolute;
   top: 6px;
@@ -182,20 +216,44 @@ button:active { transform: translateY(1px); }
   padding: 2px 9px;
   border-radius: 50%;
 }
+
+/* Телефон */
 @media (max-width: 600px) {
-  .side-buttons { width: 112px; right: 6px; }
-  .side-buttons button { font-size: 13px; padding: 9px 4px; }
-}
+  .topbar {
+    grid-template-columns: 1fr auto 1fr;
+    padding: 0 8px;
+  }
 
-.player-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  .logo {
+    font-size: 18px;
+  }
 
-  color: #f4dfad;
-  font-size: 20px;
-  font-weight: bold;
-  white-space: nowrap;
+  .player-title {
+    font-size: 12px;
+  }
 
-  text-shadow: 2px 2px 3px #000;
-}
+  .server {
+    font-size: 12px;
+  }
+
+  .top-buttons {
+    gap: 5px;
+  }
+
+  .top-buttons button {
+    width: 115px;
+    padding: 10px 5px;
+    font-size: 13px;
+  }
+
+  .side-buttons {
+    width: 112px;
+    right: 6px;
+  }
+
+  .side-buttons button {
+    width: 112px;
+    font-size: 13px;
+    padding: 9px 4px;
+  }
+  }
