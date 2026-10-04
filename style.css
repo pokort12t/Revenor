@@ -26,6 +26,16 @@ button:active { transform: translateY(1px); }
   padding: 0 14px;
   background: linear-gradient(#5a381d, #2d190e);
   border-bottom: 2px solid #b58a4b;
+
+  .top-buttons,
+.side-buttons {
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.map-wrap {
+    pointer-events: none;
+}
 }
 .logo { font-weight: 900; letter-spacing: 3px; }
 .server { font-size: 14px; }
