@@ -1,13 +1,3 @@
-localStorage.removeItem("ravenor_players");
-localStorage.removeItem("ravenor_taken_regions");
-localStorage.removeItem("ravenor_joined");
-localStorage.removeItem("ravenor_region");
-
-
-localStorage.removeItem("ravenor_taken_regions");
-localStorage.removeItem("ravenor_joined");
-localStorage.removeItem("ravenor_region");
-
 // ==========================
 // СТАН ГРАВЦЯ
 // ==========================
@@ -43,78 +33,54 @@ const regions = {
 
 
 // ==========================
-// ЛІЧИЛЬНИК ГРАВЦІВ
+// ЛІЧИЛЬНИК
 // ==========================
 
 function updateCount() {
-
-  if (players) {
-    players.textContent = `${state.players}/55`;
-  }
-
-  if (serverCount) {
-    serverCount.textContent = `${state.players}/55 гравців`;
-  }
-
+  players.textContent = `${state.players}/55`;
+  serverCount.textContent = `${state.players}/55 гравців`;
 }
 
 
 // ==========================
-// ЗАЙНЯТІ РЕГІОНИ
+// РЕГІОНИ
 // ==========================
 
 function getTakenRegions() {
-
   return JSON.parse(
     localStorage.getItem("ravenor_taken_regions") || "[]"
   );
-
 }
 
-
 function saveTakenRegions(regions) {
-
   localStorage.setItem(
     "ravenor_taken_regions",
     JSON.stringify(regions)
   );
-
 }
-
-
-// ==========================
-// ОНОВЛЕННЯ РЕГІОНІВ
-// ==========================
 
 function updateRegionButtons() {
 
-  const takenRegions = getTakenRegions();
+  const taken = getTakenRegions();
 
   document.querySelectorAll(".region-option").forEach(button => {
 
     const region = button.dataset.region;
     const status = button.querySelector("span");
 
-    if (takenRegions.includes(region)) {
+    if (taken.includes(region)) {
 
       button.disabled = true;
-
-      if (status) {
-        status.textContent = "Зайнятий";
-      }
+      status.textContent = "Зайнятий";
 
     } else {
 
       button.disabled = false;
-
-      if (status) {
-        status.textContent = "Вільний";
-      }
+      status.textContent = "Вільний";
 
     }
 
   });
-
 }
 
 
@@ -134,48 +100,43 @@ function openGame() {
   } else {
 
     regionSelect.classList.remove("hidden");
-
     updateRegionButtons();
 
   }
-
 }
 
 
 // ==========================
-// ВХІД НА СЕРВЕР
+// УВІЙТИ
 // ==========================
 
 function joinGame() {
 
-  if (!state.joined) {
-
-    if (state.players >= 55) {
-
-      alert("Сервер заповнений.");
-
-      return;
-    }
-
-    state.players++;
-    state.joined = true;
-
-    localStorage.setItem(
-      "ravenor_players",
-      state.players
-    );
-
-    localStorage.setItem(
-      "ravenor_joined",
-      "1"
-    );
-
-    updateCount();
-
+  if (state.joined) {
+    openGame();
+    return;
   }
 
-  openGame();
+  if (state.players >= 55) {
+    alert("Сервер заповнений.");
+    return;
+  }
 
+  state.players++;
+  state.joined = true;
+
+  localStorage.setItem(
+    "ravenor_players",
+    state.players
+  );
+
+  localStorage.setItem(
+    "ravenor_joined",
+    "1"
+  );
+
+  updateCount();
+  openGame();
 }
 
 
@@ -187,31 +148,23 @@ document.querySelectorAll(".region-option").forEach(button => {
 
   button.addEventListener("click", () => {
 
-    if (state.region) {
-      return;
-    }
+    if (state.region) return;
 
     const region = button.dataset.region;
+    const taken = getTakenRegions();
 
-    const takenRegions = getTakenRegions();
-
-    if (takenRegions.includes(region)) {
+    if (taken.includes(region)) {
 
       alert("Цей регіон уже зайнятий.");
-
       updateRegionButtons();
-
       return;
+
     }
 
+    taken.push(region);
 
-    // Додаємо регіон до зайнятих
-    takenRegions.push(region);
+    saveTakenRegions(taken);
 
-    saveTakenRegions(takenRegions);
-
-
-    // Запам'ятовуємо регіон гравця
     state.region = region;
 
     localStorage.setItem(
@@ -219,9 +172,7 @@ document.querySelectorAll(".region-option").forEach(button => {
       region
     );
 
-
     regionSelect.classList.add("hidden");
-
 
     alert(
       `Ти обрав регіон: ${regions[region]}`
@@ -233,51 +184,42 @@ document.querySelectorAll(".region-option").forEach(button => {
 
 
 // ==========================
-// ВИХІД ГРАВЦЯ
+// ВИХІД
 // ==========================
 
 function leaveGame() {
 
-  // Якщо гравець був на сервері
-  if (state.joined) {
+  if (!state.joined) return;
 
-    // Звільняємо його регіон
-    if (state.region) {
+  // Звільняємо регіон
+  if (state.region) {
 
-      const takenRegions = getTakenRegions();
+    const taken = getTakenRegions();
 
-      const newTakenRegions =
-        takenRegions.filter(
-          region => region !== state.region
-        );
-
-      saveTakenRegions(newTakenRegions);
-
-    }
-
-
-    // Зменшуємо кількість гравців
-    state.players = Math.max(
-      0,
-      state.players - 1
+    const updated = taken.filter(
+      region => region !== state.region
     );
 
-    localStorage.setItem(
-      "ravenor_players",
-      state.players
-    );
-
+    saveTakenRegions(updated);
   }
 
+  // Зменшуємо гравців
+  state.players = Math.max(
+    0,
+    state.players - 1
+  );
 
-  // Очищаємо дані цього гравця
+  localStorage.setItem(
+    "ravenor_players",
+    state.players
+  );
+
   localStorage.removeItem("ravenor_joined");
   localStorage.removeItem("ravenor_region");
-
 }
 
 
-// При закритті / виході зі сторінки
+// Закриття сторінки
 window.addEventListener(
   "beforeunload",
   leaveGame
@@ -285,7 +227,7 @@ window.addEventListener(
 
 
 // ==========================
-// КНОПКА "УВІЙТИ"
+// КНОПКА
 // ==========================
 
 joinBtn.addEventListener(
@@ -301,14 +243,12 @@ joinBtn.addEventListener(
 updateCount();
 
 if (state.joined) {
-
   openGame();
-
 }
 
 
 // ==========================
-// РУХ КАРТИ ПАЛЬЦЕМ
+// КАРТА
 // ==========================
 
 const mapImage =
@@ -321,7 +261,6 @@ const mapPlaceholder =
 mapImage.addEventListener("load", () => {
 
   mapImage.style.display = "block";
-
   mapPlaceholder.style.display = "none";
 
 });
@@ -330,7 +269,6 @@ mapImage.addEventListener("load", () => {
 mapImage.addEventListener("error", () => {
 
   mapImage.style.display = "none";
-
   mapPlaceholder.style.display = "grid";
 
 });
@@ -347,11 +285,9 @@ let dragging = false;
 
 mapImage.addEventListener(
   "touchstart",
-  (e) => {
+  e => {
 
-    if (e.touches.length !== 1) {
-      return;
-    }
+    if (e.touches.length !== 1) return;
 
     dragging = true;
 
@@ -367,12 +303,9 @@ mapImage.addEventListener(
 
 mapImage.addEventListener(
   "touchmove",
-  (e) => {
+  e => {
 
-    if (
-      !dragging ||
-      e.touches.length !== 1
-    ) {
+    if (!dragging || e.touches.length !== 1) {
       return;
     }
 
