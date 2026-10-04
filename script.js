@@ -93,6 +93,19 @@ if (state.joined) openGame();
 
 // Титул гравця
 let playerTitle = "independentLord";
+const playerTitleElement = document.getElementById("playerTitle");
+
+const titleNames = {
+  independentLord: "Самостійний лорд",
+  lord: "Лорд",
+  king: "Король"
+};
+
+function updatePlayerTitle() {
+  playerTitleElement.textContent = titleNames[playerTitle];
+}
+
+updatePlayerTitle();
 // Варіанти:
 // "independentLord" — Самостійний лорд
 // "lord" — Лорд
