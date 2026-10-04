@@ -126,13 +126,19 @@ button:active {
 #mapImage {
   display: block;
   position: absolute;
+
   width: auto;
   height: auto;
+
   max-width: none;
   max-height: none;
+
   user-select: none;
   -webkit-user-drag: none;
+
   touch-action: none;
+
+  transform-origin: center center;
 }
 
 #mapPlaceholder {
