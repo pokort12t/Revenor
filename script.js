@@ -13,12 +13,23 @@ const state = {
 // ЕЛЕМЕНТИ
 // ==========================
 
-const serverScreen = document.getElementById("serverScreen");
-const gameScreen = document.getElementById("gameScreen");
-const players = document.getElementById("players");
-const serverCount = document.getElementById("serverCount");
-const joinBtn = document.getElementById("joinBtn");
-const regionSelect = document.getElementById("regionSelect");
+const serverScreen =
+  document.getElementById("serverScreen");
+
+const gameScreen =
+  document.getElementById("gameScreen");
+
+const players =
+  document.getElementById("players");
+
+const serverCount =
+  document.getElementById("serverCount");
+
+const joinBtn =
+  document.getElementById("joinBtn");
+
+const regionSelect =
+  document.getElementById("regionSelect");
 
 
 // ==========================
@@ -47,7 +58,7 @@ function updateCount() {
 
 
 // ==========================
-// РЕГІОНИ
+// ОТРИМАННЯ ЗАЙНЯТИХ РЕГІОНІВ
 // ==========================
 
 function getTakenRegions() {
@@ -65,8 +76,13 @@ function getTakenRegions() {
     return [];
 
   }
+
 }
 
+
+// ==========================
+// ЗБЕРЕЖЕННЯ РЕГІОНІВ
+// ==========================
 
 function saveTakenRegions(regions) {
 
@@ -77,6 +93,10 @@ function saveTakenRegions(regions) {
 
 }
 
+
+// ==========================
+// КНОПКИ РЕГІОНІВ
+// ==========================
 
 function updateRegionButtons() {
 
@@ -99,8 +119,10 @@ function updateRegionButtons() {
         button.disabled = true;
 
         if (status) {
+
           status.textContent =
             "Зайнятий";
+
         }
 
       } else {
@@ -108,13 +130,16 @@ function updateRegionButtons() {
         button.disabled = false;
 
         if (status) {
+
           status.textContent =
             "Вільний";
+
         }
 
       }
 
     });
+
 }
 
 
@@ -194,6 +219,7 @@ function joinGame() {
 
 
   updateCount();
+
   openGame();
 
 }
@@ -212,7 +238,9 @@ document
       () => {
 
         if (state.region) {
+
           return;
+
         }
 
 
@@ -275,11 +303,11 @@ document
 function leaveGame() {
 
   if (!state.joined) {
+
     return;
+
   }
 
-
-  // Звільняємо регіон
 
   if (state.region) {
 
@@ -300,8 +328,6 @@ function leaveGame() {
 
   }
 
-
-  // Зменшуємо кількість
 
   state.players =
     Math.max(
@@ -377,30 +403,27 @@ const mapPlaceholder =
   );
 
 
-// ==========================
+// ==================================================
 // МАСШТАБ
-// ==========================
+// ==================================================
 
 let scale = 1;
-
-
-// Мінімальний і максимальний zoom
 
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 4;
 
 
-// ==========================
+// ==================================================
 // ПОЗИЦІЯ КАРТИ
-// ==========================
+// ==================================================
 
 let mapX = 0;
 let mapY = 0;
 
 
-// ==========================
+// ==================================================
 // РОЗМІР КАРТИ
-// ==========================
+// ==================================================
 
 function getMapWidth() {
 
@@ -442,10 +465,6 @@ function limitMap() {
     getMapHeight();
 
 
-  // --------------------------
-  // ЛІВО / ПРАВО
-  // --------------------------
-
   if (mapWidth > areaWidth) {
 
     const maxX =
@@ -467,10 +486,6 @@ function limitMap() {
 
   }
 
-
-  // --------------------------
-  // ВГОРУ / ВНИЗ
-  // --------------------------
 
   if (mapHeight > areaHeight) {
 
@@ -537,12 +552,11 @@ function fitMapToScreen() {
     !imageWidth ||
     !imageHeight
   ) {
+
     return;
+
   }
 
-
-  // Масштаб, при якому
-  // ВСЯ карта вміститься
 
   const scaleX =
     areaWidth / imageWidth;
@@ -551,20 +565,21 @@ function fitMapToScreen() {
     areaHeight / imageHeight;
 
 
+  // КАРТА ЗАПОВНЮЄ ВЕСЬ ЕКРАН
+
   scale =
-    Math.min(
+    Math.max(
       scaleX,
       scaleY
     );
 
 
-  // Не збільшуємо більше
-  // оригінального розміру
+  // Максимальний стартовий zoom
 
   scale =
     Math.min(
       scale,
-      1
+      MAX_SCALE
     );
 
 
@@ -581,9 +596,7 @@ function fitMapToScreen() {
 // ZOOM
 // ==================================================
 
-function setZoom(
-  newScale
-) {
+function setZoom(newScale) {
 
   scale =
     Math.max(
@@ -609,6 +622,7 @@ const zoomControls =
     "div"
   );
 
+
 zoomControls.className =
   "map-zoom";
 
@@ -628,6 +642,7 @@ const zoomIn =
   document.getElementById(
     "zoomIn"
   );
+
 
 const zoomOut =
   document.getElementById(
@@ -674,13 +689,14 @@ mapImage.addEventListener(
     mapImage.style.display =
       "block";
 
-    mapPlaceholder.style.display =
-      "none";
 
+    if (mapPlaceholder) {
 
-    // ВАЖЛИВО:
-    // вся карта спочатку
-    // повністю на екрані
+      mapPlaceholder.style.display =
+        "none";
+
+    }
+
 
     fitMapToScreen();
 
@@ -695,15 +711,20 @@ mapImage.addEventListener(
     mapImage.style.display =
       "none";
 
-    mapPlaceholder.style.display =
-      "grid";
+
+    if (mapPlaceholder) {
+
+      mapPlaceholder.style.display =
+        "grid";
+
+    }
 
   }
 );
 
 
 // ==================================================
-// РУХ ОДНИМ ПАЛЬЦЕМ
+// РУХ ПАЛЬЦЕМ
 // ==================================================
 
 let dragging = false;
@@ -717,7 +738,6 @@ let dragStartY = 0;
 // ==================================================
 
 let pinchDistance = 0;
-
 let pinchScale = 1;
 
 
@@ -733,6 +753,7 @@ function getTouchDistance(
   const dx =
     touch1.clientX -
     touch2.clientX;
+
 
   const dy =
     touch1.clientY -
@@ -758,8 +779,6 @@ mapWrap.addEventListener(
     event.preventDefault();
 
 
-    // ДВА ПАЛЬЦІ
-
     if (
       event.touches.length === 2
     ) {
@@ -782,8 +801,6 @@ mapWrap.addEventListener(
 
     }
 
-
-    // ОДИН ПАЛЕЦЬ
 
     if (
       event.touches.length === 1
@@ -821,10 +838,6 @@ mapWrap.addEventListener(
     event.preventDefault();
 
 
-    // ==========================
-    // ДВА ПАЛЬЦІ — ZOOM
-    // ==========================
-
     if (
       event.touches.length === 2
     ) {
@@ -856,10 +869,6 @@ mapWrap.addEventListener(
 
     }
 
-
-    // ==========================
-    // ОДИН ПАЛЕЦЬ — РУХ
-    // ==========================
 
     if (
       dragging &&
@@ -944,7 +953,9 @@ window.addEventListener(
   event => {
 
     if (!mouseDragging) {
+
       return;
+
     }
 
 
@@ -1015,10 +1026,6 @@ mapWrap.addEventListener(
 window.addEventListener(
   "resize",
   () => {
-
-    // Після зміни екрана
-    // знову підганяємо карту,
-    // щоб вона не обрізалась
 
     fitMapToScreen();
 
