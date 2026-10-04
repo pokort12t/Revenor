@@ -194,3 +194,53 @@ updateCount();
 if (state.joined) {
   openGame();
     }
+
+// ==========================
+// РУХ КАРТИ ПАЛЬЦЕМ
+// ==========================
+
+const mapImage = document.getElementById("mapImage");
+const mapPlaceholder = document.getElementById("mapPlaceholder");
+
+mapImage.addEventListener("load", () => {
+  mapImage.style.display = "block";
+  mapPlaceholder.style.display = "none";
+});
+
+mapImage.addEventListener("error", () => {
+  mapImage.style.display = "none";
+  mapPlaceholder.style.display = "grid";
+});
+
+let mapX = 0;
+let mapY = 0;
+
+let startX = 0;
+let startY = 0;
+
+let dragging = false;
+
+mapImage.addEventListener("touchstart", (e) => {
+  if (e.touches.length !== 1) return;
+
+  dragging = true;
+
+  startX = e.touches[0].clientX - mapX;
+  startY = e.touches[0].clientY - mapY;
+});
+
+mapImage.addEventListener("touchmove", (e) => {
+  if (!dragging || e.touches.length !== 1) return;
+
+  e.preventDefault();
+
+  mapX = e.touches[0].clientX - startX;
+  mapY = e.touches[0].clientY - startY;
+
+  mapImage.style.transform =
+    `translate(${mapX}px, ${mapY}px)`;
+});
+
+mapImage.addEventListener("touchend", () => {
+  dragging = false;
+});
