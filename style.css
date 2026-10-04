@@ -118,17 +118,21 @@ button:active {
 .map-wrap {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  overflow: auto;
-  pointer-events: none;
+  overflow: hidden;
+  touch-action: none;
+  background: #6e7651;
 }
 
 #mapImage {
-  display: none;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  display: block;
+  position: absolute;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
 }
 
 #mapPlaceholder {
