@@ -1,21 +1,3 @@
-localStorage.removeItem("ravenor_players");
-localStorage.removeItem("ravenor_taken_regions");
-localStorage.removeItem("ravenor_joined");
-localStorage.removeItem("ravenor_region");
-
-
-// ==========================
-// МЕЖІ РУХУ КАРТИ
-// ==========================
-
-const MAP_LIMITS = {
-  left: 0,
-  right: 0,
-  top:  0,
-  bottom: 0
-};
-
-
 // ==========================
 // СТАН ГРАВЦЯ
 // ==========================
@@ -55,8 +37,12 @@ const regions = {
 // ==========================
 
 function updateCount() {
-  players.textContent = `${state.players}/55`;
-  serverCount.textContent = `${state.players}/55 гравців`;
+
+  players.textContent =
+    `${state.players}/55`;
+
+  serverCount.textContent =
+    `${state.players}/55 гравців`;
 }
 
 
@@ -65,52 +51,70 @@ function updateCount() {
 // ==========================
 
 function getTakenRegions() {
+
   try {
+
     return JSON.parse(
-      localStorage.getItem("ravenor_taken_regions") || "[]"
+      localStorage.getItem(
+        "ravenor_taken_regions"
+      ) || "[]"
     );
+
   } catch {
+
     return [];
+
   }
 }
 
 
 function saveTakenRegions(regions) {
+
   localStorage.setItem(
     "ravenor_taken_regions",
     JSON.stringify(regions)
   );
+
 }
 
 
 function updateRegionButtons() {
 
-  const taken = getTakenRegions();
+  const taken =
+    getTakenRegions();
 
-  document.querySelectorAll(".region-option").forEach(button => {
+  document
+    .querySelectorAll(".region-option")
+    .forEach(button => {
 
-    const region = button.dataset.region;
-    const status = button.querySelector("span");
+      const region =
+        button.dataset.region;
 
-    if (taken.includes(region)) {
+      const status =
+        button.querySelector("span");
 
-      button.disabled = true;
 
-      if (status) {
-        status.textContent = "Зайнятий";
+      if (taken.includes(region)) {
+
+        button.disabled = true;
+
+        if (status) {
+          status.textContent =
+            "Зайнятий";
+        }
+
+      } else {
+
+        button.disabled = false;
+
+        if (status) {
+          status.textContent =
+            "Вільний";
+        }
+
       }
 
-    } else {
-
-      button.disabled = false;
-
-      if (status) {
-        status.textContent = "Вільний";
-      }
-
-    }
-
-  });
+    });
 }
 
 
@@ -120,40 +124,63 @@ function updateRegionButtons() {
 
 function openGame() {
 
-  serverScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
+  serverScreen.classList.add(
+    "hidden"
+  );
+
+  gameScreen.classList.remove(
+    "hidden"
+  );
+
 
   if (state.region) {
 
-    regionSelect.classList.add("hidden");
+    regionSelect.classList.add(
+      "hidden"
+    );
 
   } else {
 
-    regionSelect.classList.remove("hidden");
+    regionSelect.classList.remove(
+      "hidden"
+    );
+
     updateRegionButtons();
 
   }
+
 }
 
 
 // ==========================
-// УВІЙТИ
+// УВІЙТИ НА СЕРВЕР
 // ==========================
 
 function joinGame() {
 
   if (state.joined) {
+
     openGame();
+
     return;
+
   }
 
+
   if (state.players >= 55) {
-    alert("Сервер заповнений.");
+
+    alert(
+      "Сервер заповнений."
+    );
+
     return;
+
   }
+
 
   state.players++;
   state.joined = true;
+
 
   localStorage.setItem(
     "ravenor_players",
@@ -165,8 +192,10 @@ function joinGame() {
     "1"
   );
 
+
   updateCount();
   openGame();
+
 }
 
 
@@ -174,45 +203,69 @@ function joinGame() {
 // ВИБІР РЕГІОНУ
 // ==========================
 
-document.querySelectorAll(".region-option").forEach(button => {
+document
+  .querySelectorAll(".region-option")
+  .forEach(button => {
 
-  button.addEventListener("click", () => {
+    button.addEventListener(
+      "click",
+      () => {
 
-    if (state.region) {
-      return;
-    }
+        if (state.region) {
+          return;
+        }
 
-    const region = button.dataset.region;
-    const taken = getTakenRegions();
 
-    if (taken.includes(region)) {
+        const region =
+          button.dataset.region;
 
-      alert("Цей регіон уже зайнятий.");
-      updateRegionButtons();
+        const taken =
+          getTakenRegions();
 
-      return;
-    }
 
-    taken.push(region);
+        if (taken.includes(region)) {
 
-    saveTakenRegions(taken);
+          alert(
+            "Цей регіон уже зайнятий."
+          );
 
-    state.region = region;
+          updateRegionButtons();
 
-    localStorage.setItem(
-      "ravenor_region",
-      region
-    );
+          return;
 
-    regionSelect.classList.add("hidden");
+        }
 
-    alert(
-      `Ти обрав регіон: ${regions[region]}`
+
+        taken.push(region);
+
+        saveTakenRegions(
+          taken
+        );
+
+
+        state.region =
+          region;
+
+
+        localStorage.setItem(
+          "ravenor_region",
+          region
+        );
+
+
+        regionSelect.classList.add(
+          "hidden"
+        );
+
+
+        alert(
+          `Ти обрав регіон: ${regions[region]}`
+        );
+
+      }
     );
 
   });
-
-});
 
 
 // ==========================
@@ -225,26 +278,43 @@ function leaveGame() {
     return;
   }
 
+
+  // Звільняємо регіон
+
   if (state.region) {
 
-    const taken = getTakenRegions();
+    const taken =
+      getTakenRegions();
 
-    const updated = taken.filter(
-      region => region !== state.region
+
+    const updated =
+      taken.filter(
+        region =>
+          region !== state.region
+      );
+
+
+    saveTakenRegions(
+      updated
     );
 
-    saveTakenRegions(updated);
   }
 
-  state.players = Math.max(
-    0,
-    state.players - 1
-  );
+
+  // Зменшуємо кількість
+
+  state.players =
+    Math.max(
+      0,
+      state.players - 1
+    );
+
 
   localStorage.setItem(
     "ravenor_players",
     state.players
   );
+
 
   localStorage.removeItem(
     "ravenor_joined"
@@ -253,6 +323,7 @@ function leaveGame() {
   localStorage.removeItem(
     "ravenor_region"
   );
+
 }
 
 
@@ -278,8 +349,11 @@ joinBtn.addEventListener(
 
 updateCount();
 
+
 if (state.joined) {
+
   openGame();
+
 }
 
 
@@ -288,33 +362,64 @@ if (state.joined) {
 // ==================================================
 
 const mapWrap =
-  document.querySelector(".map-wrap");
+  document.querySelector(
+    ".map-wrap"
+  );
 
 const mapImage =
-  document.getElementById("mapImage");
+  document.getElementById(
+    "mapImage"
+  );
 
 const mapPlaceholder =
-  document.getElementById("mapPlaceholder");
+  document.getElementById(
+    "mapPlaceholder"
+  );
 
 
 // ==========================
-// НАЛАШТУВАННЯ
+// МАСШТАБ
 // ==========================
 
 let scale = 1;
 
+
+// Мінімальний і максимальний zoom
+
 const MIN_SCALE = 0.5;
-const MAX_SCALE = 3;
+const MAX_SCALE = 4;
+
+
+// ==========================
+// ПОЗИЦІЯ КАРТИ
+// ==========================
 
 let mapX = 0;
 let mapY = 0;
 
 
 // ==========================
-// ПОКАЗ КАРТИ
+// РОЗМІР КАРТИ
 // ==========================
 
-mapImage.style.display = "block";
+function getMapWidth() {
+
+  return (
+    mapImage.naturalWidth *
+    scale
+  );
+
+}
+
+
+function getMapHeight() {
+
+  return (
+    mapImage.naturalHeight *
+    scale
+  );
+
+}
 
 
 // ==================================================
@@ -323,82 +428,152 @@ mapImage.style.display = "block";
 
 function limitMap() {
 
-  if (!mapImage.naturalWidth) {
-    return;
-  }
+  const areaWidth =
+    mapWrap.clientWidth;
 
-  const areaWidth = mapWrap.clientWidth;
-  const areaHeight = mapWrap.clientHeight;
+  const areaHeight =
+    mapWrap.clientHeight;
+
 
   const mapWidth =
-    mapImage.naturalWidth * scale;
+    getMapWidth();
 
   const mapHeight =
-    mapImage.naturalHeight * scale;
+    getMapHeight();
 
 
-  // Якщо карта ширша за екран
+  // --------------------------
+  // ЛІВО / ПРАВО
+  // --------------------------
+
   if (mapWidth > areaWidth) {
 
     const maxX =
       (mapWidth - areaWidth) / 2;
 
-    mapX = Math.max(
-      -maxX,
-      Math.min(maxX, mapX)
-    );
+
+    mapX =
+      Math.max(
+        -maxX,
+        Math.min(
+          maxX,
+          mapX
+        )
+      );
 
   } else {
 
-    mapX = 100;
+    mapX = 0;
 
   }
 
 
-  // Якщо карта вища за екран
+  // --------------------------
+  // ВГОРУ / ВНИЗ
+  // --------------------------
+
   if (mapHeight > areaHeight) {
 
     const maxY =
       (mapHeight - areaHeight) / 2;
 
-    mapY = Math.max(
-      -maxY,
-      Math.min(maxY, mapY)
-    );
+
+    mapY =
+      Math.max(
+        -maxY,
+        Math.min(
+          maxY,
+          mapY
+        )
+      );
 
   } else {
 
-    mapY = -100;
+    mapY = 0;
 
   }
+
 }
 
 
 // ==================================================
-// ЗАСТОСУВАТИ ПОЗИЦІЮ
+// ПОКАЗ КАРТИ
 // ==================================================
 
 function renderMap() {
 
   limitMap();
 
+
   mapImage.style.transform =
-    `translate(-0%, -0%)
+    `translate(-50%, -50%)
      translate(${mapX}px, ${mapY}px)
      scale(${scale})`;
+
 }
 
 
 // ==================================================
-// ЦЕНТР
+// ПОЧАТКОВИЙ МАСШТАБ
 // ==================================================
 
-function centerMap() {
+function fitMapToScreen() {
 
-  mapX = -50;
-  mapY = 50;
+  const areaWidth =
+    mapWrap.clientWidth;
+
+  const areaHeight =
+    mapWrap.clientHeight;
+
+
+  const imageWidth =
+    mapImage.naturalWidth;
+
+  const imageHeight =
+    mapImage.naturalHeight;
+
+
+  if (
+    !imageWidth ||
+    !imageHeight
+  ) {
+    return;
+  }
+
+
+  // Масштаб, при якому
+  // ВСЯ карта вміститься
+
+  const scaleX =
+    areaWidth / imageWidth;
+
+  const scaleY =
+    areaHeight / imageHeight;
+
+
+  scale =
+    Math.min(
+      scaleX,
+      scaleY
+    );
+
+
+  // Не збільшуємо більше
+  // оригінального розміру
+
+  scale =
+    Math.min(
+      scale,
+      1
+    );
+
+
+  mapX = 0;
+  mapY = 0;
+
 
   renderMap();
+
 }
 
 
@@ -406,14 +581,22 @@ function centerMap() {
 // ZOOM
 // ==================================================
 
-function setZoom(newScale) {
+function setZoom(
+  newScale
+) {
 
-  scale = Math.max(
-    MIN_SCALE,
-    Math.min(MAX_SCALE, newScale)
-  );
+  scale =
+    Math.max(
+      MIN_SCALE,
+      Math.min(
+        MAX_SCALE,
+        newScale
+      )
+    );
+
 
   renderMap();
+
 }
 
 
@@ -422,24 +605,34 @@ function setZoom(newScale) {
 // ==================================================
 
 const zoomControls =
-  document.createElement("div");
+  document.createElement(
+    "div"
+  );
 
 zoomControls.className =
   "map-zoom";
+
 
 zoomControls.innerHTML = `
   <button type="button" id="zoomIn">+</button>
   <button type="button" id="zoomOut">−</button>
 `;
 
-mapWrap.appendChild(zoomControls);
+
+mapWrap.appendChild(
+  zoomControls
+);
 
 
 const zoomIn =
-  document.getElementById("zoomIn");
+  document.getElementById(
+    "zoomIn"
+  );
 
 const zoomOut =
-  document.getElementById("zoomOut");
+  document.getElementById(
+    "zoomOut"
+  );
 
 
 zoomIn.addEventListener(
@@ -448,7 +641,9 @@ zoomIn.addEventListener(
 
     event.stopPropagation();
 
-    setZoom(scale + 0.25);
+    setZoom(
+      scale + 0.25
+    );
 
   }
 );
@@ -460,27 +655,34 @@ zoomOut.addEventListener(
 
     event.stopPropagation();
 
-    setZoom(scale - 0.25);
+    setZoom(
+      scale - 0.25
+    );
 
   }
 );
 
 
 // ==================================================
-// ЗАВАНТАЖЕННЯ
+// ЗАВАНТАЖЕННЯ КАРТИ
 // ==================================================
 
 mapImage.addEventListener(
   "load",
   () => {
 
-    mapImage.style.display = "block";
+    mapImage.style.display =
+      "block";
 
-    mapPlaceholder.style.display = "none";
+    mapPlaceholder.style.display =
+      "none";
 
-    scale = 1;
 
-    centerMap();
+    // ВАЖЛИВО:
+    // вся карта спочатку
+    // повністю на екрані
+
+    fitMapToScreen();
 
   }
 );
@@ -490,16 +692,18 @@ mapImage.addEventListener(
   "error",
   () => {
 
-    mapImage.style.display = "none";
+    mapImage.style.display =
+      "none";
 
-    mapPlaceholder.style.display = "grid";
+    mapPlaceholder.style.display =
+      "grid";
 
   }
 );
 
 
 // ==================================================
-// ОДИН ПАЛЕЦЬ — РУХ
+// РУХ ОДНИМ ПАЛЬЦЕМ
 // ==================================================
 
 let dragging = false;
@@ -509,28 +713,37 @@ let dragStartY = 0;
 
 
 // ==================================================
-// ДВА ПАЛЬЦІ — ZOOM
+// ZOOM ДВОМА ПАЛЬЦЯМИ
 // ==================================================
 
 let pinchDistance = 0;
+
 let pinchScale = 1;
 
 
-// ==========================
+// ==================================================
 // ВІДСТАНЬ МІЖ ПАЛЬЦЯМИ
-// ==========================
+// ==================================================
 
-function getTouchDistance(touch1, touch2) {
+function getTouchDistance(
+  touch1,
+  touch2
+) {
 
   const dx =
-    touch1.clientX - touch2.clientX;
+    touch1.clientX -
+    touch2.clientX;
 
   const dy =
-    touch1.clientY - touch2.clientY;
+    touch1.clientY -
+    touch2.clientY;
+
 
   return Math.sqrt(
-    dx * dx + dy * dy
+    dx * dx +
+    dy * dy
   );
+
 }
 
 
@@ -545,10 +758,14 @@ mapWrap.addEventListener(
     event.preventDefault();
 
 
-    // Два пальці
-    if (event.touches.length === 2) {
+    // ДВА ПАЛЬЦІ
+
+    if (
+      event.touches.length === 2
+    ) {
 
       dragging = false;
+
 
       pinchDistance =
         getTouchDistance(
@@ -556,27 +773,40 @@ mapWrap.addEventListener(
           event.touches[1]
         );
 
-      pinchScale = scale;
+
+      pinchScale =
+        scale;
+
 
       return;
+
     }
 
 
-    // Один палець
-    if (event.touches.length === 1) {
+    // ОДИН ПАЛЕЦЬ
+
+    if (
+      event.touches.length === 1
+    ) {
 
       dragging = true;
 
+
       dragStartX =
-        event.touches[0].clientX - mapX;
+        event.touches[0].clientX -
+        mapX;
+
 
       dragStartY =
-        event.touches[0].clientY - mapY;
+        event.touches[0].clientY -
+        mapY;
 
     }
 
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
@@ -592,10 +822,12 @@ mapWrap.addEventListener(
 
 
     // ==========================
-    // ДВА ПАЛЬЦІ
+    // ДВА ПАЛЬЦІ — ZOOM
     // ==========================
 
-    if (event.touches.length === 2) {
+    if (
+      event.touches.length === 2
+    ) {
 
       const newDistance =
         getTouchDistance(
@@ -604,10 +836,14 @@ mapWrap.addEventListener(
         );
 
 
-      if (pinchDistance > 0) {
+      if (
+        pinchDistance > 0
+      ) {
 
         const ratio =
-          newDistance / pinchDistance;
+          newDistance /
+          pinchDistance;
+
 
         setZoom(
           pinchScale * ratio
@@ -615,12 +851,14 @@ mapWrap.addEventListener(
 
       }
 
+
       return;
+
     }
 
 
     // ==========================
-    // ОДИН ПАЛЕЦЬ
+    // ОДИН ПАЛЕЦЬ — РУХ
     // ==========================
 
     if (
@@ -632,16 +870,20 @@ mapWrap.addEventListener(
         event.touches[0].clientX -
         dragStartX;
 
+
       mapY =
         event.touches[0].clientY -
         dragStartY;
+
 
       renderMap();
 
     }
 
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
@@ -653,7 +895,9 @@ mapWrap.addEventListener(
   "touchend",
   event => {
 
-    if (event.touches.length === 0) {
+    if (
+      event.touches.length === 0
+    ) {
 
       dragging = false;
 
@@ -678,11 +922,16 @@ mapImage.addEventListener(
 
     mouseDragging = true;
 
+
     dragStartX =
-      event.clientX - mapX;
+      event.clientX -
+      mapX;
+
 
     dragStartY =
-      event.clientY - mapY;
+      event.clientY -
+      mapY;
+
 
     event.preventDefault();
 
@@ -698,11 +947,16 @@ window.addEventListener(
       return;
     }
 
+
     mapX =
-      event.clientX - dragStartX;
+      event.clientX -
+      dragStartX;
+
 
     mapY =
-      event.clientY - dragStartY;
+      event.clientY -
+      dragStartY;
+
 
     renderMap();
 
@@ -730,18 +984,27 @@ mapWrap.addEventListener(
 
     event.preventDefault();
 
-    if (event.deltaY < 0) {
 
-      setZoom(scale + 0.1);
+    if (
+      event.deltaY < 0
+    ) {
+
+      setZoom(
+        scale + 0.1
+      );
 
     } else {
 
-      setZoom(scale - 0.1);
+      setZoom(
+        scale - 0.1
+      );
 
     }
 
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
@@ -753,7 +1016,11 @@ window.addEventListener(
   "resize",
   () => {
 
-    renderMap();
+    // Після зміни екрана
+    // знову підганяємо карту,
+    // щоб вона не обрізалась
+
+    fitMapToScreen();
 
   }
 );
