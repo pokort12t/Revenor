@@ -6,86 +6,180 @@
   <title>Ravenor</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
   <div id="app">
-<header class="topbar">
-  <div class="logo">RAVENOR</div>
 
-  <div id="playerTitle" class="player-title">
-    Самостійний лорд
-  </div>
+    <!-- ВЕРХНЯ ПАНЕЛЬ -->
+    <header class="topbar">
 
-  <div class="server">
-    Ravenor I <span id="players">0/55</span>
-  </div>
-</header>
+      <div class="logo">
+        RAVENOR
+      </div>
+
+      <div id="playerTitle" class="player-title">
+        Самостійний лорд
+      </div>
+
+      <div class="server">
+        Ravenor I
+        <span id="players">0/55</span>
+      </div>
+
+    </header>
+
 
     <main>
+
+      <!-- ЕКРАН СЕРВЕРА -->
       <section id="serverScreen" class="screen">
+
         <div class="panel">
+
           <h1>СЕРВЕР</h1>
+
           <div class="server-card">
+
             <h2>Ravenor I</h2>
-            <p id="serverCount">0/55 гравців</p>
-            <button id="joinBtn">УВІЙТИ</button>
+
+            <p id="serverCount">
+              0/55 гравців
+            </p>
+
+            <button id="joinBtn">
+              УВІЙТИ
+            </button>
+
           </div>
+
         </div>
+
       </section>
 
+
+      <!-- ГРА -->
       <section id="gameScreen" class="screen hidden">
+
+
+        <!-- ВИБІР РЕГІОНУ -->
         <div id="regionSelect" class="region-select">
-  <h2>ОБЕРИ ВІЛЬНИЙ РЕГІОН</h2>
 
-  <button class="region-option" data-region="west">
-    Західна земля
-    <span>Вільний</span>
-  </button>
+          <h2>
+            ОБЕРИ ВІЛЬНИЙ РЕГІОН
+          </h2>
 
-  <button class="region-option" data-region="erenor">
-    Еренор
-    <span>Вільний</span>
-  </button>
+          <button class="region-option" data-region="west">
+            Західна земля
+            <span>Вільний</span>
+          </button>
 
-  <button class="region-option" data-region="erodaronis">
-    Еродароніс
-    <span>Вільний</span>
-  </button>
+          <button class="region-option" data-region="erenor">
+            Еренор
+            <span>Вільний</span>
+          </button>
+
+          <button class="region-option" data-region="erodaronis">
+            Еродароніс
+            <span>Вільний</span>
+          </button>
+
         </div>
+
+
+        <!-- ІГРОВА ЗОНА -->
         <div class="game-area">
+
+
+          <!-- КАРТА -->
           <div class="map-wrap">
-            <img id="mapImage" src="images/map.png" alt="Карта Ravenor">
-            <div id="mapPlaceholder">ТУТ БУДЕ КАРТА RAVENOR<br><small>Замініть images/map.png на свою карту</small></div>
+
+            <img
+              id="mapImage"
+              src="01_map_continent_3_regions.png"
+              alt="Карта Ravenor"
+            >
+
+            <div id="mapPlaceholder">
+              Завантаження карти...
+            </div>
+
           </div>
-       
-<div class="top-buttons">
-  <button data-panel="settlements">Поселення</button>
-  <button data-panel="mines">Шахти</button>
-  <button data-panel="gold">Золото</button>
-</div>
 
-<div class="side-buttons">
-  <button data-panel="people">Люди</button>
-  <button data-panel="army">Армія</button>
-</div>
 
-<div id="titleButton"></div>
-          
+          <!-- КНОПКИ ЗВЕРХУ -->
+          <div class="top-buttons">
+
+            <button data-panel="settlements">
+              Поселення
+            </button>
+
+            <button data-panel="mines">
+              Шахти
+            </button>
+
+            <button data-panel="gold">
+              Золото
+            </button>
+
+          </div>
+
+
+          <!-- КНОПКИ ЗБОКУ -->
+          <div class="side-buttons">
+
+            <button data-panel="people">
+              Люди
+            </button>
+
+            <button data-panel="army">
+              Армія
+            </button>
+
+          </div>
+
+
+          <!-- КНОПКА ТИТУЛУ -->
+          <div id="titleButton"></div>
+
         </div>
 
+
+        <!-- НИЖНЯ НАВІГАЦІЯ -->
         <nav class="bottom-nav">
-          <button class="active" data-view="map">Карта</button>
-          <button data-view="region">Регіон</button>
+
+          <button class="active" data-view="map">
+            Карта
+          </button>
+
+          <button data-view="region">
+            Регіон
+          </button>
+
         </nav>
 
+
+        <!-- ІНФОРМАЦІЙНА ПАНЕЛЬ -->
         <div id="infoPanel" class="info-panel hidden">
-          <button id="closePanel" class="close">×</button>
+
+          <button id="closePanel" class="close">
+            ×
+          </button>
+
           <h2 id="panelTitle"></h2>
+
           <div id="panelContent"></div>
+
         </div>
+
       </section>
+
     </main>
+
   </div>
 
+
   <script src="script.js"></script>
+
 </body>
-</html>
+    </html>
