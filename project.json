@@ -1,0 +1,24 @@
+{
+  "name": "Ravenor",
+  "map": "01_map_continent_3_regions.png",
+  "regions": [
+    {
+      "id": 1,
+      "name": "Західна земля",
+      "capital": "Ким",
+      "image": "02_region_1_zahidna_zemlya.png"
+    },
+    {
+      "id": 2,
+      "name": "Еренор",
+      "capital": "Родан",
+      "image": "03_region_2_erenor.png"
+    },
+    {
+      "id": 3,
+      "name": "Еродароніс",
+      "capital": "Зажень",
+      "image": "04_region_3_erodaronis.png"
+    }
+  ]
+}
