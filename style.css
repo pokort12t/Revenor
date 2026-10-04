@@ -159,3 +159,16 @@ button:active { transform: translateY(1px); }
   .side-buttons { width: 112px; right: 6px; }
   .side-buttons button { font-size: 13px; padding: 9px 4px; }
 }
+
+.player-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  color: #f4dfad;
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
+
+  text-shadow: 2px 2px 3px #000;
+}
