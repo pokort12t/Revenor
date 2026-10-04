@@ -395,8 +395,8 @@ function renderMap() {
 
 function centerMap() {
 
-  mapX = 0;
-  mapY = 0;
+  mapX = -50;
+  mapY = 50;
 
   renderMap();
 }
