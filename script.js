@@ -85,3 +85,55 @@ mapImage.addEventListener("error", () => {
 
 updateCount();
 if (state.joined) openGame();
+
+
+// Титул гравця
+let playerTitle = "independentLord";
+// Варіанти:
+// "independentLord" — Самостійний лорд
+// "lord" — Лорд
+// "king" — Король
+
+const titleButton = document.getElementById("titleButton");
+
+function updateTitleButton() {
+  titleButton.innerHTML = "";
+
+  if (playerTitle === "independentLord") {
+    // У самостійного лорда немає кнопки
+    return;
+  }
+
+  if (playerTitle === "lord") {
+    // У лорда є кнопка "Король"
+    titleButton.innerHTML = `
+      <button class="title-button" data-panel="king">
+        Король
+      </button>
+    `;
+  }
+
+  if (playerTitle === "king") {
+    // У короля є кнопка "Влада"
+    titleButton.innerHTML = `
+      <button class="title-button" data-panel="power">
+        Влада
+      </button>
+    `;
+  }
+
+  document.querySelectorAll("#titleButton [data-panel]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const data = panels[btn.dataset.panel];
+
+      if (!data) return;
+
+      panelTitle.textContent = data[0];
+      panelContent.textContent = data[1];
+      infoPanel.classList.remove("hidden");
+    });
+  });
+}
+
+updateTitleButton();
+
