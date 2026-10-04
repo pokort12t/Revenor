@@ -1,3 +1,6 @@
+localStorage.removeItem("ravenor_joined");
+localStorage.removeItem("ravenor_region");
+
 const state = {
   players: Number(localStorage.getItem("ravenor_players") || 0),
   joined: localStorage.getItem("ravenor_joined") === "1",
