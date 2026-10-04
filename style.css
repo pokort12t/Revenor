@@ -83,17 +83,36 @@ button:active { transform: translateY(1px); }
   text-shadow: 2px 2px #000;
 }
 
+.top-buttons {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+.top-buttons button {
+  width: 130px;
+}
+
 .side-buttons {
   position: absolute;
   right: 10px;
-  top: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   width: 130px;
+  z-index: 5;
 }
-.side-buttons button { width: 100%; padding: 10px 6px; }
 
+.side-buttons button {
+  width: 130px;
+  padding: 10px 6px;
+}
 .bottom-nav {
   height: 56px;
   display: flex;
