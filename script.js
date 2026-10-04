@@ -9,7 +9,7 @@ localStorage.removeItem("ravenor_region");
 // ==========================
 
 const MAP_LIMITS = {
-  left: -500,
+  left: 0,
   right: 500,
   top: -500,
   bottom: 100
