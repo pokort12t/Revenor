@@ -356,7 +356,7 @@ let mapY = 0;
 
 
 // ==========================
-// ОБМЕЖЕННЯ КАРТИ
+// ОБМЕЖЕННЯ
 // ==========================
 
 function limitMap() {
@@ -382,8 +382,6 @@ function limitMap() {
     mapImage.naturalHeight * scale;
 
 
-  // ---------- X ----------
-
   if (mapWidth > areaWidth) {
 
     const maxX =
@@ -403,8 +401,6 @@ function limitMap() {
 
   }
 
-
-  // ---------- Y ----------
 
   if (mapHeight > areaHeight) {
 
@@ -443,7 +439,7 @@ function renderMap() {
 
 
 // ==========================
-// ПОЧАТКОВИЙ МАСШТАБ
+// ПОЧАТКОВИЙ МАСШТАБ МАТЕРИКА
 // ==========================
 
 function fitMapToScreen() {
@@ -482,6 +478,13 @@ function fitMapToScreen() {
     );
 
 
+  scale =
+    Math.min(
+      scale,
+      1
+    );
+
+
   mapX = 0;
   mapY = 0;
 
@@ -489,8 +492,48 @@ function fitMapToScreen() {
 }
 
 
+// ==================================================
+// ПРАВИЛЬНИЙ ПЕРШИЙ ЗАПУСК
+// ==================================================
+
+function startMap() {
+
+  if (!mapImage.naturalWidth) {
+    return;
+  }
+
+  mapImage.style.display =
+    "block";
+
+  mapPlaceholder.style.display =
+    "none";
+
+
+  if (regionView) {
+
+    scale = 0.3;
+
+    mapX = 0;
+    mapY = 0;
+
+    renderMap();
+
+  } else {
+
+    fitMapToScreen();
+
+    requestAnimationFrame(() => {
+
+      renderMap();
+
+    });
+
+  }
+}
+
+
 // ==========================
-// ZOOM
+// КНОПКИ ZOOM
 // ==========================
 
 const zoomControls =
@@ -517,7 +560,7 @@ const zoomOut =
 
 
 // ==========================
-// +
+// ZOOM +
 // ==========================
 
 zoomIn.addEventListener(
@@ -544,7 +587,7 @@ zoomIn.addEventListener(
 
 
 // ==========================
-// −
+// ZOOM −
 // ==========================
 
 zoomOut.addEventListener(
@@ -578,27 +621,7 @@ mapImage.addEventListener(
   "load",
   () => {
 
-    mapImage.style.display =
-      "block";
-
-    mapPlaceholder.style.display =
-      "none";
-
-
-    if (regionView) {
-
-      scale = 0.3;
-
-      mapX = 0;
-      mapY = 0;
-
-      renderMap();
-
-    } else {
-
-      fitMapToScreen();
-
-    }
+    startMap();
 
   }
 );
@@ -616,6 +639,17 @@ mapImage.addEventListener(
 
   }
 );
+
+
+// ==========================
+// ЯКЩО КАРТА ВЖЕ ЗАВАНТАЖЕНА
+// ==========================
+
+if (mapImage.complete) {
+
+  startMap();
+
+}
 
 
 // ==================================================
@@ -667,7 +701,9 @@ mapWrap.addEventListener(
       mapY;
 
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
@@ -705,7 +741,9 @@ mapWrap.addEventListener(
     renderMap();
 
   },
-  { passive: false }
+  {
+    passive: false
+  }
 );
 
 
@@ -724,7 +762,7 @@ mapWrap.addEventListener(
 
 
 // ==================================================
-// МИША
+// РУХ МИШКОЮ
 // ==================================================
 
 let mouseDragging = false;
@@ -901,8 +939,6 @@ document
 window.addEventListener(
   "resize",
   () => {
-
-    // НЕ скидаємо zoom материка
 
     if (regionView) {
 
