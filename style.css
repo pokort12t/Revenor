@@ -371,4 +371,65 @@ padding: 0;
 
 font-size: 28px;
 font-weight: bold;
+
+  /* ==========================
+   КНОПКИ СТОЛИЦЬ
+   ========================== */
+
+#capitalButtons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.capital-button {
+  position: absolute;
+
+  width: 58px;
+  height: 58px;
+
+  padding: 0;
+
+  border: none;
+  background: url("ravenor_capital_icon.png") center / contain no-repeat;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+
+  transform: translate(-50%, -50%);
+
+  filter: drop-shadow(0 3px 4px #000);
+
+  transition: transform 0.15s;
+}
+
+.capital-button:active {
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+.capital-name {
+  position: absolute;
+
+  left: 50%;
+  top: 100%;
+
+  transform: translateX(-50%);
+
+  white-space: nowrap;
+
+  padding: 3px 7px;
+
+  background: #3c2414;
+  color: #f8e7b8;
+
+  border: 1px solid #b58a4b;
+  border-radius: 5px;
+
+  font-size: 12px;
+  font-weight: bold;
+
+  pointer-events: none;
+}
   }
