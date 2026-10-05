@@ -1031,3 +1031,97 @@ window.addEventListener(
 
   }
 );
+
+
+// ==========================
+// ПЕРЕМИКАННЯ КАРТА / РЕГІОН
+// ==========================
+
+const continentMap =
+  "01_map_continent_3_regions.png";
+
+const regionImages = {
+  west: "02_region_1_zahidna_zemlya.png",
+  erenor: "03_region_2_erenor.png",
+  erodaronis: "04_region_3_erodaronis.png"
+};
+
+
+document.querySelectorAll(
+  ".bottom-nav button"
+).forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    const view =
+      button.dataset.view;
+
+
+    // ==========================
+    // КАРТА
+    // ==========================
+
+    if (view === "map") {
+
+      mapImage.src =
+        continentMap;
+
+      document
+        .querySelectorAll(".bottom-nav button")
+        .forEach(btn =>
+          btn.classList.remove("active")
+        );
+
+      button.classList.add("active");
+
+      return;
+    }
+
+
+    // ==========================
+    // РЕГІОН
+    // ==========================
+
+    if (view === "region") {
+
+      if (!state.region) {
+
+        alert(
+          "Ти ще не маєш регіону."
+        );
+
+        return;
+      }
+
+
+      const regionImage =
+        regionImages[state.region];
+
+
+      if (!regionImage) {
+
+        alert(
+          "Карта цього регіону не знайдена."
+        );
+
+        return;
+      }
+
+
+      mapImage.src =
+        regionImage;
+
+
+      document
+        .querySelectorAll(".bottom-nav button")
+        .forEach(btn =>
+          btn.classList.remove("active")
+        );
+
+      button.classList.add("active");
+
+    }
+
+  });
+
+});
