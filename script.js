@@ -498,7 +498,10 @@ function renderMap() {
     `translate(-50%, -50%)
      translate(${mapX}px, ${mapY}px)
      scale(${scale})`;
+
+  renderCapitals();
 }
+
 
 // ==========================
 // ПОКАЗ СТОЛИЦЬ
