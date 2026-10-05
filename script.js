@@ -514,16 +514,60 @@ function renderCapitals() {
   let list;
 
   if (regionView) {
-
-    list =
-      capitals[state.region] || [];
-
+    list = capitals[state.region] || [];
   } else {
-
-    list =
-      capitals.continent || [];
-
+    list = capitals.continent || [];
   }
+
+  const areaWidth = mapWrap.clientWidth;
+  const areaHeight = mapWrap.clientHeight;
+
+  const imageWidth = mapImage.naturalWidth;
+  const imageHeight = mapImage.naturalHeight;
+
+  if (!imageWidth || !imageHeight) {
+    return;
+  }
+
+  list.forEach(capital => {
+
+    const button = document.createElement("button");
+
+    button.className = "capital-button";
+    button.type = "button";
+
+    // КООРДИНАТИ СТОЛИЦІ НА КАРТІ
+    const x =
+      areaWidth / 2 +
+      (capital.x - imageWidth / 2) * scale +
+      mapX;
+
+    const y =
+      areaHeight / 2 +
+      (capital.y - imageHeight / 2) * scale +
+      mapY;
+
+    button.style.left = `${x}px`;
+    button.style.top = `${y}px`;
+
+    button.innerHTML = `
+      <span class="capital-name">
+        ${capital.name}
+      </span>
+    `;
+
+    button.addEventListener("click", event => {
+
+      event.stopPropagation();
+
+      alert(`Столиця: ${capital.name}`);
+
+    });
+
+    capitalButtons.appendChild(button);
+
+  });
+}
 
 
   const areaWidth =
