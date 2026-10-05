@@ -336,6 +336,69 @@ const mapImage =
 const mapPlaceholder =
   document.getElementById("mapPlaceholder");
 
+// ==========================
+// СТОЛИЦІ
+// ==========================
+
+const capitalButtons =
+  document.getElementById("capitalButtons");
+
+
+// ==========================
+// КООРДИНАТИ СТОЛИЦЬ
+// ==========================
+
+// ТУТ ТИ САМ ЗМІНЮЄШ X І Y
+
+const capitals = {
+
+  // МАТЕРИК
+  continent: [
+    {
+      name: "Ким",
+      x: 300,
+      y: 250
+    },
+
+    {
+      name: "Родан",
+      x: 600,
+      y: 300
+    },
+
+    {
+      name: "Зажень",
+      x: 800,
+      y: 500
+    }
+  ],
+
+  // РЕГІОНИ
+  west: [
+    {
+      name: "Ким",
+      x: 400,
+      y: 300
+    }
+  ],
+
+  erenor: [
+    {
+      name: "Родан",
+      x: 400,
+      y: 300
+    }
+  ],
+
+  erodaronis: [
+    {
+      name: "Зажень",
+      x: 400,
+      y: 300
+    }
+  ]
+
+};
 
 // ==========================
 // МАСШТАБ
