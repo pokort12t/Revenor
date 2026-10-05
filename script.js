@@ -13,23 +13,12 @@ const state = {
 // ЕЛЕМЕНТИ
 // ==========================
 
-const serverScreen =
-  document.getElementById("serverScreen");
-
-const gameScreen =
-  document.getElementById("gameScreen");
-
-const players =
-  document.getElementById("players");
-
-const serverCount =
-  document.getElementById("serverCount");
-
-const joinBtn =
-  document.getElementById("joinBtn");
-
-const regionSelect =
-  document.getElementById("regionSelect");
+const serverScreen = document.getElementById("serverScreen");
+const gameScreen = document.getElementById("gameScreen");
+const players = document.getElementById("players");
+const serverCount = document.getElementById("serverCount");
+const joinBtn = document.getElementById("joinBtn");
+const regionSelect = document.getElementById("regionSelect");
 
 
 // ==========================
@@ -41,6 +30,22 @@ const regions = {
   erenor: "Еренор",
   erodaronis: "Еродароніс"
 };
+
+const regionImages = {
+  west: "02_region_1_zahidna_zemlya.png",
+  erenor: "03_region_2_erenor.png",
+  erodaronis: "04_region_3_erodaronis.png"
+};
+
+const continentMap =
+  "01_map_continent_3_regions.png";
+
+
+// ==========================
+// РЕЖИМ КАРТИ
+// ==========================
+
+let regionView = false;
 
 
 // ==========================
@@ -58,7 +63,7 @@ function updateCount() {
 
 
 // ==========================
-// ОТРИМАННЯ ЗАЙНЯТИХ РЕГІОНІВ
+// РЕГІОНИ
 // ==========================
 
 function getTakenRegions() {
@@ -76,13 +81,8 @@ function getTakenRegions() {
     return [];
 
   }
-
 }
 
-
-// ==========================
-// ЗБЕРЕЖЕННЯ РЕГІОНІВ
-// ==========================
 
 function saveTakenRegions(regions) {
 
@@ -90,13 +90,8 @@ function saveTakenRegions(regions) {
     "ravenor_taken_regions",
     JSON.stringify(regions)
   );
-
 }
 
-
-// ==========================
-// КНОПКИ РЕГІОНІВ
-// ==========================
 
 function updateRegionButtons() {
 
@@ -113,16 +108,13 @@ function updateRegionButtons() {
       const status =
         button.querySelector("span");
 
-
       if (taken.includes(region)) {
 
         button.disabled = true;
 
         if (status) {
-
           status.textContent =
             "Зайнятий";
-
         }
 
       } else {
@@ -130,16 +122,13 @@ function updateRegionButtons() {
         button.disabled = false;
 
         if (status) {
-
           status.textContent =
             "Вільний";
-
         }
 
       }
 
     });
-
 }
 
 
@@ -149,36 +138,26 @@ function updateRegionButtons() {
 
 function openGame() {
 
-  serverScreen.classList.add(
-    "hidden"
-  );
+  serverScreen.classList.add("hidden");
 
-  gameScreen.classList.remove(
-    "hidden"
-  );
-
+  gameScreen.classList.remove("hidden");
 
   if (state.region) {
 
-    regionSelect.classList.add(
-      "hidden"
-    );
+    regionSelect.classList.add("hidden");
 
   } else {
 
-    regionSelect.classList.remove(
-      "hidden"
-    );
+    regionSelect.classList.remove("hidden");
 
     updateRegionButtons();
 
   }
-
 }
 
 
 // ==========================
-// УВІЙТИ НА СЕРВЕР
+// УВІЙТИ
 // ==========================
 
 function joinGame() {
@@ -188,24 +167,17 @@ function joinGame() {
     openGame();
 
     return;
-
   }
-
 
   if (state.players >= 55) {
 
-    alert(
-      "Сервер заповнений."
-    );
+    alert("Сервер заповнений.");
 
     return;
-
   }
-
 
   state.players++;
   state.joined = true;
-
 
   localStorage.setItem(
     "ravenor_players",
@@ -217,11 +189,9 @@ function joinGame() {
     "1"
   );
 
-
   updateCount();
 
   openGame();
-
 }
 
 
@@ -238,18 +208,14 @@ document
       () => {
 
         if (state.region) {
-
           return;
-
         }
-
 
         const region =
           button.dataset.region;
 
         const taken =
           getTakenRegions();
-
 
         if (taken.includes(region)) {
 
@@ -260,31 +226,22 @@ document
           updateRegionButtons();
 
           return;
-
         }
-
 
         taken.push(region);
 
-        saveTakenRegions(
-          taken
-        );
+        saveTakenRegions(taken);
 
-
-        state.region =
-          region;
-
+        state.region = region;
 
         localStorage.setItem(
           "ravenor_region",
           region
         );
 
-
         regionSelect.classList.add(
           "hidden"
         );
-
 
         alert(
           `Ти обрав регіон: ${regions[region]}`
@@ -303,17 +260,13 @@ document
 function leaveGame() {
 
   if (!state.joined) {
-
     return;
-
   }
-
 
   if (state.region) {
 
     const taken =
       getTakenRegions();
-
 
     const updated =
       taken.filter(
@@ -321,13 +274,8 @@ function leaveGame() {
           region !== state.region
       );
 
-
-    saveTakenRegions(
-      updated
-    );
-
+    saveTakenRegions(updated);
   }
-
 
   state.players =
     Math.max(
@@ -335,12 +283,10 @@ function leaveGame() {
       state.players - 1
     );
 
-
   localStorage.setItem(
     "ravenor_players",
     state.players
   );
-
 
   localStorage.removeItem(
     "ravenor_joined"
@@ -349,7 +295,6 @@ function leaveGame() {
   localStorage.removeItem(
     "ravenor_region"
   );
-
 }
 
 
@@ -360,7 +305,7 @@ window.addEventListener(
 
 
 // ==========================
-// КНОПКА УВІЙТИ
+// УВІЙТИ
 // ==========================
 
 joinBtn.addEventListener(
@@ -375,11 +320,8 @@ joinBtn.addEventListener(
 
 updateCount();
 
-
 if (state.joined) {
-
   openGame();
-
 }
 
 
@@ -388,24 +330,18 @@ if (state.joined) {
 // ==================================================
 
 const mapWrap =
-  document.querySelector(
-    ".map-wrap"
-  );
+  document.querySelector(".map-wrap");
 
 const mapImage =
-  document.getElementById(
-    "mapImage"
-  );
+  document.getElementById("mapImage");
 
 const mapPlaceholder =
-  document.getElementById(
-    "mapPlaceholder"
-  );
+  document.getElementById("mapPlaceholder");
 
 
-// ==================================================
+// ==========================
 // МАСШТАБ
-// ==================================================
+// ==========================
 
 let scale = 1;
 
@@ -413,43 +349,27 @@ const MIN_SCALE = 0.5;
 const MAX_SCALE = 4;
 
 
-// ==================================================
-// ПОЗИЦІЯ КАРТИ
-// ==================================================
+// ==========================
+// ПОЗИЦІЯ
+// ==========================
 
-let mapX = 1000;
-let mapY = -1000;
-
-
-// ==================================================
-// РОЗМІР КАРТИ
-// ==================================================
-
-function getMapWidth() {
-
-  return (
-    mapImage.naturalWidth *
-    scale
-  );
-
-}
+let mapX = 0;
+let mapY = 0;
 
 
-function getMapHeight() {
-
-  return (
-    mapImage.naturalHeight *
-    scale
-  );
-
-}
-
-
-// ==================================================
-// ОБМЕЖЕННЯ КАРТИ
-// ==================================================
+// ==========================
+// ОБМЕЖЕННЯ
+// ==========================
 
 function limitMap() {
+
+  if (regionView) {
+
+    mapX = 0;
+    mapY = 0;
+
+    return;
+  }
 
   const areaWidth =
     mapWrap.clientWidth;
@@ -457,28 +377,21 @@ function limitMap() {
   const areaHeight =
     mapWrap.clientHeight;
 
-
   const mapWidth =
-    getMapWidth();
+    mapImage.naturalWidth * scale;
 
   const mapHeight =
-    getMapHeight();
-
+    mapImage.naturalHeight * scale;
 
   if (mapWidth > areaWidth) {
 
     const maxX =
       (mapWidth - areaWidth) / 2;
 
-
-    mapX =
-      Math.max(
-        -maxX,
-        Math.min(
-          maxX,
-          mapX
-        )
-      );
+    mapX = Math.max(
+      -maxX,
+      Math.min(maxX, mapX)
+    );
 
   } else {
 
@@ -486,51 +399,42 @@ function limitMap() {
 
   }
 
-
   if (mapHeight > areaHeight) {
 
     const maxY =
       (mapHeight - areaHeight) / 2;
 
-
-    mapY =
-      Math.max(
-        -maxY,
-        Math.min(
-          maxY,
-          mapY
-        )
-      );
+    mapY = Math.max(
+      -maxY,
+      Math.min(maxY, mapY)
+    );
 
   } else {
 
     mapY = 0;
 
   }
-
 }
 
 
-// ==================================================
+// ==========================
 // ПОКАЗ КАРТИ
-// ==================================================
+// ==========================
 
 function renderMap() {
 
   limitMap();
 
-
   mapImage.style.transform =
     `translate(-50%, -50%)
      translate(${mapX}px, ${mapY}px)
      scale(${scale})`;
-
 }
 
 
-// ==================================================
-// ПОЧАТКОВИЙ МАСШТАБ
-// ==================================================
+// ==========================
+// КАРТА НА ВЕСЬ ЕКРАН
+// ==========================
 
 function fitMapToScreen() {
 
@@ -540,23 +444,15 @@ function fitMapToScreen() {
   const areaHeight =
     mapWrap.clientHeight;
 
-
   const imageWidth =
     mapImage.naturalWidth;
 
   const imageHeight =
     mapImage.naturalHeight;
 
-
-  if (
-    !imageWidth ||
-    !imageHeight
-  ) {
-
+  if (!imageWidth || !imageHeight) {
     return;
-
   }
-
 
   const scaleX =
     areaWidth / imageWidth;
@@ -564,74 +460,39 @@ function fitMapToScreen() {
   const scaleY =
     areaHeight / imageHeight;
 
-
-  // КАРТА ЗАПОВНЮЄ ВЕСЬ ЕКРАН
-
   scale =
-    Math.max(
+    Math.min(
       scaleX,
       scaleY
     );
 
-
-  // Максимальний стартовий zoom
-
   scale =
     Math.min(
       scale,
-      MAX_SCALE
+      1
     );
-
 
   mapX = 0;
   mapY = 0;
 
-
   renderMap();
-
 }
 
 
-// ==================================================
-// ZOOM
-// ==================================================
-
-function setZoom(newScale) {
-
-  scale =
-    Math.max(
-      MIN_SCALE,
-      Math.min(
-        MAX_SCALE,
-        newScale
-      )
-    );
-
-
-  renderMap();
-
-}
-
-
-// ==================================================
-// КНОПКИ + / −
-// ==================================================
+// ==========================
+// КНОПКИ ZOOM
+// ==========================
 
 const zoomControls =
-  document.createElement(
-    "div"
-  );
-
+  document.createElement("div");
 
 zoomControls.className =
   "map-zoom";
-
 
 zoomControls.innerHTML = `
   <button type="button" id="zoomIn">+</button>
   <button type="button" id="zoomOut">−</button>
 `;
-
 
 mapWrap.appendChild(
   zoomControls
@@ -639,15 +500,10 @@ mapWrap.appendChild(
 
 
 const zoomIn =
-  document.getElementById(
-    "zoomIn"
-  );
-
+  document.getElementById("zoomIn");
 
 const zoomOut =
-  document.getElementById(
-    "zoomOut"
-  );
+  document.getElementById("zoomOut");
 
 
 zoomIn.addEventListener(
@@ -656,9 +512,17 @@ zoomIn.addEventListener(
 
     event.stopPropagation();
 
-    setZoom(
-      scale + 0.25
-    );
+    if (regionView) {
+      return;
+    }
+
+    scale =
+      Math.min(
+        MAX_SCALE,
+        scale + 0.25
+      );
+
+    renderMap();
 
   }
 );
@@ -670,17 +534,25 @@ zoomOut.addEventListener(
 
     event.stopPropagation();
 
-    setZoom(
-      scale - 0.25
-    );
+    if (regionView) {
+      return;
+    }
+
+    scale =
+      Math.max(
+        MIN_SCALE,
+        scale - 0.25
+      );
+
+    renderMap();
 
   }
 );
 
 
-// ==================================================
+// ==========================
 // ЗАВАНТАЖЕННЯ КАРТИ
-// ==================================================
+// ==========================
 
 mapImage.addEventListener(
   "load",
@@ -689,16 +561,23 @@ mapImage.addEventListener(
     mapImage.style.display =
       "block";
 
+    mapPlaceholder.style.display =
+      "none";
 
-    if (mapPlaceholder) {
+    if (regionView) {
 
-      mapPlaceholder.style.display =
-        "none";
+      scale = 1;
+
+      mapX = 0;
+      mapY = 0;
+
+      renderMap();
+
+    } else {
+
+      fitMapToScreen();
 
     }
-
-
-    fitMapToScreen();
 
   }
 );
@@ -711,13 +590,8 @@ mapImage.addEventListener(
     mapImage.style.display =
       "none";
 
-
-    if (mapPlaceholder) {
-
-      mapPlaceholder.style.display =
-        "grid";
-
-    }
+    mapPlaceholder.style.display =
+      "grid";
 
   }
 );
@@ -734,41 +608,6 @@ let dragStartY = 0;
 
 
 // ==================================================
-// ZOOM ДВОМА ПАЛЬЦЯМИ
-// ==================================================
-
-let pinchDistance = 0;
-let pinchScale = 1;
-
-
-// ==================================================
-// ВІДСТАНЬ МІЖ ПАЛЬЦЯМИ
-// ==================================================
-
-function getTouchDistance(
-  touch1,
-  touch2
-) {
-
-  const dx =
-    touch1.clientX -
-    touch2.clientX;
-
-
-  const dy =
-    touch1.clientY -
-    touch2.clientY;
-
-
-  return Math.sqrt(
-    dx * dx +
-    dy * dy
-  );
-
-}
-
-
-// ==================================================
 // TOUCH START
 // ==================================================
 
@@ -776,43 +615,19 @@ mapWrap.addEventListener(
   "touchstart",
   event => {
 
-    event.preventDefault();
-
-
-    if (
-      event.touches.length === 2
-    ) {
-
-      dragging = false;
-
-
-      pinchDistance =
-        getTouchDistance(
-          event.touches[0],
-          event.touches[1]
-        );
-
-
-      pinchScale =
-        scale;
-
-
+    if (regionView) {
       return;
-
     }
 
+    event.preventDefault();
 
-    if (
-      event.touches.length === 1
-    ) {
+    if (event.touches.length === 1) {
 
       dragging = true;
-
 
       dragStartX =
         event.touches[0].clientX -
         mapX;
-
 
       dragStartY =
         event.touches[0].clientY -
@@ -821,9 +636,7 @@ mapWrap.addEventListener(
     }
 
   },
-  {
-    passive: false
-  }
+  { passive: false }
 );
 
 
@@ -835,40 +648,11 @@ mapWrap.addEventListener(
   "touchmove",
   event => {
 
-    event.preventDefault();
-
-
-    if (
-      event.touches.length === 2
-    ) {
-
-      const newDistance =
-        getTouchDistance(
-          event.touches[0],
-          event.touches[1]
-        );
-
-
-      if (
-        pinchDistance > 0
-      ) {
-
-        const ratio =
-          newDistance /
-          pinchDistance;
-
-
-        setZoom(
-          pinchScale * ratio
-        );
-
-      }
-
-
+    if (regionView) {
       return;
-
     }
 
+    event.preventDefault();
 
     if (
       dragging &&
@@ -879,20 +663,16 @@ mapWrap.addEventListener(
         event.touches[0].clientX -
         dragStartX;
 
-
       mapY =
         event.touches[0].clientY -
         dragStartY;
-
 
       renderMap();
 
     }
 
   },
-  {
-    passive: false
-  }
+  { passive: false }
 );
 
 
@@ -902,25 +682,121 @@ mapWrap.addEventListener(
 
 mapWrap.addEventListener(
   "touchend",
-  event => {
+  () => {
 
-    if (
-      event.touches.length === 0
-    ) {
-
-      dragging = false;
-
-      pinchDistance = 0;
-
-    }
+    dragging = false;
 
   }
 );
 
 
 // ==================================================
-// МИША
+// КАРТА / РЕГІОН
 // ==================================================
+
+document
+  .querySelectorAll(".bottom-nav button")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const view =
+          button.dataset.view;
+
+
+        // ==========================
+        // КАРТА
+        // ==========================
+
+        if (view === "map") {
+
+          regionView = false;
+
+          mapImage.src =
+            continentMap;
+
+          document
+            .querySelectorAll(
+              ".bottom-nav button"
+            )
+            .forEach(btn =>
+              btn.classList.remove(
+                "active"
+              )
+            );
+
+          button.classList.add(
+            "active"
+          );
+
+          return;
+        }
+
+
+        // ==========================
+        // РЕГІОН
+        // ==========================
+
+        if (view === "region") {
+
+          if (!state.region) {
+
+            alert(
+              "Ти ще не маєш регіону."
+            );
+
+            return;
+          }
+
+
+          const image =
+            regionImages[
+              state.region
+            ];
+
+
+          if (!image) {
+
+            alert(
+              "Карта регіону не знайдена."
+            );
+
+            return;
+          }
+
+
+          regionView = true;
+
+          mapImage.src = image;
+
+
+          document
+            .querySelectorAll(
+              ".bottom-nav button"
+            )
+            .forEach(btn =>
+              btn.classList.remove(
+                "active"
+              )
+            );
+
+          button.classList.add(
+            "active"
+          );
+
+        }
+
+      }
+    );
+
+  });
+
+
+// ==========================
+// МИША
+// ==========================
 
 let mouseDragging = false;
 
@@ -929,18 +805,19 @@ mapImage.addEventListener(
   "mousedown",
   event => {
 
-    mouseDragging = true;
+    if (regionView) {
+      return;
+    }
 
+    mouseDragging = true;
 
     dragStartX =
       event.clientX -
       mapX;
 
-
     dragStartY =
       event.clientY -
       mapY;
-
 
     event.preventDefault();
 
@@ -952,22 +829,20 @@ window.addEventListener(
   "mousemove",
   event => {
 
-    if (!mouseDragging) {
-
+    if (
+      !mouseDragging ||
+      regionView
+    ) {
       return;
-
     }
-
 
     mapX =
       event.clientX -
       dragStartX;
 
-
     mapY =
       event.clientY -
       dragStartY;
-
 
     renderMap();
 
@@ -985,143 +860,26 @@ window.addEventListener(
 );
 
 
-// ==================================================
-// КОЛЕСО МИШІ
-// ==================================================
-
-mapWrap.addEventListener(
-  "wheel",
-  event => {
-
-    event.preventDefault();
-
-
-    if (
-      event.deltaY < 0
-    ) {
-
-      setZoom(
-        scale + 0.1
-      );
-
-    } else {
-
-      setZoom(
-        scale - 0.1
-      );
-
-    }
-
-  },
-  {
-    passive: false
-  }
-);
-
-
-// ==================================================
-// ЗМІНА РОЗМІРУ ЕКРАНУ
-// ==================================================
+// ==========================
+// RESIZE
+// ==========================
 
 window.addEventListener(
   "resize",
   () => {
 
-    fitMapToScreen();
+    if (regionView) {
+
+      mapX = 0;
+      mapY = 0;
+
+      renderMap();
+
+    } else {
+
+      fitMapToScreen();
+
+    }
 
   }
 );
-
-
-// ==========================
-// ПЕРЕМИКАННЯ КАРТА / РЕГІОН
-// ==========================
-
-const continentMap =
-  "01_map_continent_3_regions.png";
-
-const regionImages = {
-  west: "02_region_1_zahidna_zemlya.png",
-  erenor: "03_region_2_erenor.png",
-  erodaronis: "04_region_3_erodaronis.png"
-};
-
-
-document.querySelectorAll(
-  ".bottom-nav button"
-).forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    const view =
-      button.dataset.view;
-
-
-    // ==========================
-    // КАРТА
-    // ==========================
-
-    if (view === "map") {
-
-      mapImage.src =
-        continentMap;
-
-      document
-        .querySelectorAll(".bottom-nav button")
-        .forEach(btn =>
-          btn.classList.remove("active")
-        );
-
-      button.classList.add("active");
-
-      return;
-    }
-
-
-    // ==========================
-    // РЕГІОН
-    // ==========================
-
-    if (view === "region") {
-
-      if (!state.region) {
-
-        alert(
-          "Ти ще не маєш регіону."
-        );
-
-        return;
-      }
-
-
-      const regionImage =
-        regionImages[state.region];
-
-
-      if (!regionImage) {
-
-        alert(
-          "Карта цього регіону не знайдена."
-        );
-
-        return;
-      }
-
-
-      mapImage.src =
-        regionImage;
-
-
-      document
-        .querySelectorAll(".bottom-nav button")
-        .forEach(btn =>
-          btn.classList.remove("active")
-        );
-
-      button.classList.add("active");
-
-    }
-
-  });
-
-});
