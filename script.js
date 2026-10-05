@@ -566,7 +566,7 @@ mapImage.addEventListener(
 
     if (regionView) {
 
-      scale = 0.5;
+      scale = 0.1;
 
       mapX = 0;
       mapY = 0;
