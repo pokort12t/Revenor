@@ -393,8 +393,8 @@ const capitals = {
   erodaronis: [
     {
       name: "Зажень",
-      x: 400,
-      y: 300
+      x: 0,
+      y: 0
     }
   ]
 
