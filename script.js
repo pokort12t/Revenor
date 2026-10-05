@@ -870,6 +870,8 @@ window.addEventListener(
 
     if (regionView) {
 
+      scale = 0,2;
+
       mapX = 0;
       mapY = 0;
 
