@@ -356,8 +356,8 @@ const capitals = {
   continent: [
     {
       name: "Ким",
-      x: 300,
-      y: 250
+      x: 500,
+      y: 200
     },
 
     {
