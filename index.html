@@ -10,8 +10,8 @@
 <section id="lobby" class="hidden">
 <div class="card"><h2>🏚️ Кімната очікування</h2><div id="codeView" class="code"></div><p class="muted" style="text-align:center">Надішли цей код друзям. Чекаємо на гравців…</p><div id="players"></div><p id="lobbyStatus" class="muted"></p><button id="startBtn" class="btn">Почати гру</button><button id="leaveBtn" class="btn secondary">Вийти з кімнати</button></div>
 <div id="gameCard" class="card hidden"><h2>🌍 Катастрофа</h2><div id="catastrophe" class="result"></div><h2 style="margin-top:18px">🪪 Твій персонаж</h2><div id="character" class="result"></div><h2 style="margin-top:18px">🗳️ Голосування</h2><p class="muted">Обери гравця, якого виключити з боротьби за місце в бункері.</p><div id="voteChoices"></div><button id="voteBtn" class="btn">Проголосувати</button><div id="gameStatus" class="result" style="margin-top:12px"></div><button id="nextBtn" class="btn secondary">Наступний раунд</button></div>
-</section></main><script src="/socket.io/socket.io.js"></script><script>
-const socket=io();let state=null,selectedVote=null;const $=id=>document.getElementById(id);
+</section></main><script src="https://bunker-revenor.onrender.com/socket.io/socket.io.js"></script><script>
+const socket=io("https://bunker-revenor.onrender.com",{transports:["websocket","polling"]});let state=null,selectedVote=null;const $=id=>document.getElementById(id);
 function showLobby(){ $('home').classList.add('hidden');$('lobby').classList.remove('hidden'); }
 function showHome(){ $('home').classList.remove('hidden');$('lobby').classList.add('hidden');state=null; }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -27,5 +27,6 @@ $('startBtn').onclick=()=>socket.emit('startGame',{},r=>{if(!r.ok)emitError(r.er
 $('voteBtn').onclick=()=>{const v=document.querySelector('input[name="vote"]:checked');if(!v)return emitError('Спочатку обери гравця.');socket.emit('vote',{targetId:v.value},r=>{if(!r.ok)emitError(r.error);else{state.myVote=true;render()}})};
 $('nextBtn').onclick=()=>socket.emit('nextRound',{},r=>{if(!r.ok)emitError(r.error)});
 $('leaveBtn').onclick=()=>{socket.emit('leaveRoom');showHome()};
-socket.on('kicked',()=>{alert('Тебе вигнали з кімнати.');showHome()});socket.on('connect_error',()=>{ $('lobbyStatus').textContent='Немає з’єднання із сервером. Спробуй оновити сторінку.'});
+socket.on('kicked',()=>{alert('Тебе вигнали з кімнати.');showHome()});socket.on('connect_error',()=>{ const el=$('lobbyStatus'); if(el)el.textContent='Не вдалося підключитися до сервера. Перевір адресу гри або спробуй відкрити її в Safari.'; });
+socket.on('connect',()=>{ const el=$('lobbyStatus'); if(el && !state)el.textContent='З’єднання із сервером встановлено. Створи кімнату або введи код.'; });
 </script></body></html>
