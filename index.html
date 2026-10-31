@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Бункер — гра на виживання</title>
+<style>
+:root{color-scheme:dark;--bg:#101611;--panel:#1c261e;--line:#3e5542;--accent:#b6d18a;--text:#f0f4e9;--muted:#a8b5a2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#293b2b,#101611 60%);font-family:system-ui,-apple-system,sans-serif;color:var(--text);min-height:100vh}
+header{padding:26px 18px 18px;text-align:center;border-bottom:1px solid var(--line);background:#101611bb}h1{margin:0;font-size:clamp(30px,7vw,46px);letter-spacing:2px}header p{margin:8px auto 0;color:var(--muted);max-width:540px}
+main{max-width:780px;margin:auto;padding:18px 14px 100px}.card{background:#1b261e;border:1px solid var(--line);border-radius:18px;padding:18px;margin:0 0 16px;box-shadow:0 12px 32px #0003}
+h2{font-size:19px;margin:0 0 14px;color:var(--accent)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}select,input,textarea{width:100%;border:1px solid #506651;border-radius:11px;background:#111a13;color:var(--text);padding:12px;font:inherit;min-height:46px}textarea{resize:vertical;min-height:82px}.full{grid-column:1/-1}.btn{border:0;border-radius:12px;padding:13px 16px;background:var(--accent);color:#172016;font-weight:800;font-size:16px;width:100%;cursor:pointer}.btn.secondary{background:#2a3b2d;color:var(--text);border:1px solid #506651}.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.profile{display:none}.profile.show{display:block}.result{white-space:pre-wrap;line-height:1.55;background:#111a13;border:1px solid var(--line);padding:16px;border-radius:14px}.tag{display:inline-block;padding:5px 9px;border-radius:999px;background:#314631;color:#d8e7c9;font-size:12px;margin:3px 3px 0 0}.muted{color:var(--muted);font-size:13px}.divider{height:1px;background:var(--line);margin:14px 0}@media(max-width:480px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.btnrow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>☢ БУНКЕР</h1><p>Створи персонажа, відкрий його характеристики та виріши, чим ти можеш допомогти групі вижити.</p></header>
+<main>
+<section class="card"><h2>🪪 Твій персонаж</h2>
+<form id="characterForm"><div class="grid">
+<div><label for="gender">Стать</label><select id="gender" required><option value="">Обери…</option><option>Чоловіча</option><option>Жіноча</option><option>Інша / не вказувати</option></select></div>
+<div><label for="age">Скільки років</label><input id="age" type="number" min="1" max="120" placeholder="Наприклад, 28" required></div>
+<div class="full"><label for="hobby">Хобі</label><input id="hobby" maxlength="90" placeholder="Наприклад, риболовля, ремонт техніки" required></div>
+<div class="full"><label for="job">Робота / професія</label><input id="job" maxlength="90" placeholder="Наприклад, лікар, механік, кухар" required></div>
+<div class="full"><label for="bag">Вміст рюкзака</label><textarea id="bag" maxlength="240" placeholder="Наприклад, ліхтарик, вода, аптечка…" required></textarea></div>
+<div class="full"><label for="personality">Характер</label><select id="personality" required><option value="">Обери…</option><option>Спокійний і розважливий</option><option>Сміливий і рішучий</option><option>Добрий і турботливий</option><option>Підозріливий і обережний</option><option>Хитрий і винахідливий</option><option>Запальний і впертий</option><option>Лідерський і впевнений</option><option>Замкнутий, але уважний</option></select></div>
+</div><div class="btnrow"><button class="btn" type="submit">Створити персонажа</button><button class="btn secondary" type="button" id="randomBtn">Випадковий персонаж</button></div></form></section>
+<section class="card profile" id="profile"><h2>📋 Картка персонажа</h2><div id="result" class="result"></div><div class="btnrow"><button class="btn" id="editBtn" type="button">Редагувати</button><button class="btn secondary" id="copyBtn" type="button">Копіювати картку</button></div><p class="muted">Персонаж зберігається в цьому браузері на твоєму пристрої.</p></section>
+<section class="card"><h2>🎲 Як грати</h2><p>1. Кожен гравець створює персонажа.</p><p>2. По черзі відкривайте картки й розповідайте іншим про свої навички та речі.</p><p>3. Обговоріть, хто найкорисніший для виживання в бункері.</p><p class="muted">Це конструктор персонажів. Катастрофу, кількість місць у бункері та раунди голосування можна додати наступними.</p></section>
+</main>
+<script>
+const form=document.getElementById('characterForm'),profile=document.getElementById('profile'),result=document.getElementById('result');
+const fields=['gender','age','hobby','job','bag','personality'];
+function values(){return Object.fromEntries(fields.map(id=>[id,document.getElementById(id).value.trim()]));}
+function display(v){result.textContent='Стать: '+v.gender+'\nВік: '+v.age+'\nХобі: '+v.hobby+'\nРобота: '+v.job+'\nРюкзак: '+v.bag+'\nХарактер: '+v.personality;profile.classList.add('show');localStorage.setItem('bunker-character',JSON.stringify(v));}
+form.addEventListener('submit',e=>{e.preventDefault();if(form.reportValidity())display(values());});
+document.getElementById('editBtn').onclick=()=>{profile.classList.remove('show');form.scrollIntoView({behavior:'smooth'});};
+document.getElementById('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(result.textContent);document.getElementById('copyBtn').textContent='Скопійовано!';setTimeout(()=>document.getElementById('copyBtn').textContent='Копіювати картку',1500)}catch(e){const range=document.createRange();range.selectNodeContents(result);const sel=getSelection();sel.removeAllRanges();sel.addRange(range)}};
+document.getElementById('randomBtn').onclick=()=>{const choices={gender:['Чоловіча','Жіноча'],age:[19,24,31,37,42,56,63],hobby:['Перша допомога','Риболовля','Ремонт техніки','Вирощування рослин','Кулінарія','Орієнтування на місцевості'],job:['Лікар','Механік','Кухар','Електрик','Учитель','Фермер','Рятувальник','Водій'],bag:['Аптечка, ліхтарик і вода','Мультитул, мотузка і сірники','Консерви, ніж і компас','Тепла ковдра, батарейки й рація'],personality:['Спокійний і розважливий','Сміливий і рішучий','Добрий і турботливий','Підозріливий і обережний','Хитрий і винахідливий','Запальний і впертий','Лідерський і впевнений']};for(const id of fields){const a=choices[id];document.getElementById(id).value=a[Math.floor(Math.random()*a.length)];}display(values());};
+try{const saved=JSON.parse(localStorage.getItem('bunker-character')||'null');if(saved){fields.forEach(id=>document.getElementById(id).value=saved[id]||'');display(saved)}}catch(e){}
+</script>
+</body></html>
