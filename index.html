@@ -8,7 +8,7 @@
 <div class="card"><h2>🔑 Приєднатися</h2><label>Твоє ім’я</label><input id="joinName" maxlength="20" placeholder="Введи ім’я"><label style="margin-top:10px">Код кімнати</label><input id="roomCode" maxlength="6" placeholder="6-значний код" inputmode="numeric"><button class="btn secondary" id="joinBtn">Увійти за кодом</button></div>
 <p class="muted">Потрібне інтернет-з’єднання. Усі гравці мають відкрити гру та підключитися до однієї кімнати.</p></section>
 <section id="lobby" class="hidden">
-<div class="card"><h2>🏚️ Кімната очікування</h2><div id="roomCodeInfo"><div id="codeView" class="code"></div><p class="muted" style="text-align:center">Надішли цей код друзям. Чекаємо на гравців…</p></div><div id="players"></div><div id="catastrophePanel" class="card hidden" style="margin-top:14px;background:#111a13"><h2>☢ Катастрофа</h2><img id="catastropheImage" alt="Зображення катастрофи" class="hidden" style="width:100%;max-height:340px;object-fit:cover;border-radius:12px;margin:0 0 12px"><div id="catastropheText" class="result"></div></div><div id="waitingPlayers" class="result" style="margin-top:12px">Очікуємо на гравців…</div><p id="lobbyStatus" class="muted"></p><button id="startBtn" class="btn">▶ Почати гру</button><button id="leaveBtn" class="btn secondary">Вийти з кімнати</button></div>
+<div class="card"><h2>🏚️ Кімната очікування</h2><div id="roomCodeInfo"><div id="codeView" class="code"></div><p class="muted" style="text-align:center">Надішли цей код друзям. Чекаємо на гравців…</p></div><div id="players"></div><div id="catastrophePanel" class="card hidden" style="margin-top:14px;background:#111a13"><h2>☢ Катастрофа</h2><img id="catastropheImage" alt="Зображення катастрофи" class="hidden" style="width:100%;max-height:340px;object-fit:cover;border-radius:12px;margin:0 0 12px"><div id="catastropheText" class="result"></div></div><div id="bunkerPanel" class="card hidden" style="margin-top:14px;background:#111a13"><h2>🏚️ Характеристики бункера</h2><div id="bunkerText" class="result"></div></div><button id="nextBunkerBtn" class="btn hidden">Далі</button><button id="startVotingBtn" class="btn hidden">Почати обговорення</button><div id="waitingPlayers" class="result" style="margin-top:12px">Очікуємо на гравців…</div><p id="lobbyStatus" class="muted"></p><button id="startBtn" class="btn">▶ Почати гру</button><button id="leaveBtn" class="btn secondary">Вийти з кімнати</button></div>
 </section></main><script src="https://bunker-revenor.onrender.com/socket.io/socket.io.js"></script><script>
 const socket=io("https://bunker-revenor.onrender.com",{transports:["websocket","polling"]});
 let state=null;
@@ -53,6 +53,14 @@ function render(){
   const gameStarted=state.phase!=="lobby";
   $("roomCodeInfo").classList.toggle("hidden",gameStarted);
   $("catastrophePanel").classList.toggle("hidden",!gameStarted||!state.catastrophe);
+  const showBunker=state.phase==="bunker"||state.phase==="voting"||state.phase==="roundEnd"||state.phase==="finished";
+  $("bunkerPanel").classList.toggle("hidden",!showBunker||!state.bunker);
+  if(state.bunker){
+    const b=state.bunker;
+    $("bunkerText").textContent="🎭 Розваги:\\n"+b.entertainment.join(", ")+"\\n\\n🍲 Запас їжі:\\n"+b.food+"\\n\\n📦 Склад:\\n"+b.warehouse.map(x=>"• "+x).join("\\n")+"\\n\\n🌱 Ферма:\\n"+(b.hasFarm?"Є — "+b.farm:"Немає");
+  }
+  $("nextBunkerBtn").classList.toggle("hidden",!state.isHost||state.phase!=="catastrophe");
+  $("startVotingBtn").classList.toggle("hidden",!state.isHost||state.phase!=="bunker");
   const catastropheParts=String(state.catastrophe||"").split(/\n\n/);
   const catastropheTitle=catastropheParts.shift()||"";
   const catastropheImages={
@@ -90,6 +98,8 @@ function render(){
     if(confirm("Вигнати гравця з кімнати?"))socket.emit("kick",{targetId:b.dataset.id},r=>{if(!r?.ok)emitError(r?.error);});
   });
 }
+$("nextBunkerBtn").addEventListener("click",()=>{if(!state?.isHost)return;$("nextBunkerBtn").disabled=true;socket.timeout(10000).emit("showBunker",{},(err,r)=>{$("nextBunkerBtn").disabled=false;if(err)emitError("Сервер не відповів. Спробуй ще раз.");else if(!r?.ok)emitError(r?.error||"Не вдалося відкрити бункер.");});});
+$("startVotingBtn").addEventListener("click",()=>{if(!state?.isHost)return;$("startVotingBtn").disabled=true;socket.timeout(10000).emit("startVoting",{},(err,r)=>{$("startVotingBtn").disabled=false;if(err)emitError("Сервер не відповів. Спробуй ще раз.");else if(!r?.ok)emitError(r?.error||"Не вдалося продовжити.");});});
 $("startBtn").addEventListener("click",()=>{
   if(!state||!state.isHost)return;
   if(state.players.length!==state.maxPlayers){emitError("Дочекайся всіх гравців.");return;}
