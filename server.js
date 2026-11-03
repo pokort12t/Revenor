@@ -46,6 +46,27 @@ socket.on('nextRound',(d,cb)=>{const r=roomFor(socket);if(!r||r.hostId!==socket.
 socket.on('kick',(d,cb)=>{const r=roomFor(socket);if(!r||r.hostId!==socket.id)return cb?.({ok:false,error:'Тільки ведучий може виганяти гравців.'});if(d.targetId===r.hostId)return cb?.({ok:false,error:'Не можна вигнати самого себе.'});const p=r.players.get(d.targetId);if(!p)return cb?.({ok:false,error:'Гравця не знайдено.'});io.to(p.id).emit('kicked');io.sockets.sockets.get(p.id)?.leave(r.code);r.players.delete(p.id);r.votes.delete(p.id);for(const [v,t] of r.votes)if(t===p.id)r.votes.delete(v);if(r.players.size===0)rooms.delete(r.code);else{if(r.hostId===p.id)r.hostId=[...r.players.keys()][0];broadcast(r)}cb?.({ok:true})});
 socket.on('leaveRoom',()=>leave(socket));
 socket.on('disconnect',()=>leave(socket));
-function leave(s){const r=roomFor(s);if(!r)return;r.players.delete(s.id);r.votes.delete(s.id);for(const [v,t] of r.votes)if(t===s.id)r.votes.delete(v);if(!r.players.size)rooms.delete(r.code);else{if(r.hostId===s.id)r.hostId=[...r.players.keys()][0];broadcast(r)}s.data.room=null}
+function leave(s){
+  const r=roomFor(s);
+  if(!r)return;
+  if(r.hostId===s.id){
+    for(const p of r.players.values()){
+      if(p.id!==s.id){
+        io.to(p.id).emit('roomClosed');
+        const other=io.sockets.sockets.get(p.id);
+        if(other){other.data.room=null;other.leave(r.code);}
+      }
+    }
+    rooms.delete(r.code);
+    s.data.room=null;
+    return;
+  }
+  r.players.delete(s.id);
+  r.votes.delete(s.id);
+  for(const [v,t] of r.votes)if(t===s.id)r.votes.delete(v);
+  if(!r.players.size)rooms.delete(r.code);
+  else broadcast(r);
+  s.data.room=null;
+}
 });
 const PORT=process.env.PORT||3000;server.listen(PORT,()=>console.log('Bunker server listening on '+PORT));
