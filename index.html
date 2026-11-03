@@ -74,7 +74,7 @@ function render(){
   const imageFile=catastropheImages[catastropheTitle];
   catastropheImage.classList.toggle("hidden",!gameStarted||!imageFile);
   if(imageFile)catastropheImage.src="https://raw.githubusercontent.com/pokort12t/Revenor/main/"+imageFile;
-  $("catastropheText").textContent=catastropheTitle+"\\n\\n"+catastropheParts.join("\\n\\n");
+  $("catastropheText").textContent=catastropheTitle+"\n\n"+catastropheParts.join("\n\n");
   $("waitingPlayers").classList.toggle("hidden",gameStarted);
   $("players").classList.toggle("hidden",gameStarted);
   const startBtn=$("startBtn");
