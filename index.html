@@ -49,7 +49,12 @@ $("joinBtn").addEventListener("click",()=>{
 });
 function render(){
   if(!state)return;
-  $("codeView").textContent=state.code;\n  const startBtn=$("startBtn");\n  startBtn.classList.toggle("hidden",!state.isHost||state.phase!=="lobby");\n  startBtn.disabled=state.players.length!==state.maxPlayers;\n  startBtn.textContent=state.players.length===state.maxPlayers?"▶ Почати гру":"Очікуємо всіх гравців";\n  $("lobbyStatus").textContent=state.phase!=="lobby"?(state.status||"Гру розпочато."):(state.isHost?"Ти ведучий. Коли всі приєднаються, натисни «Почати гру».":"Очікуємо, поки ведучий почне гру.");
+  $("codeView").textContent=state.code;
+  const startBtn=$("startBtn");
+  startBtn.classList.toggle("hidden",!state.isHost||state.phase!=="lobby");
+  startBtn.disabled=state.players.length!==state.maxPlayers;
+  startBtn.textContent=state.players.length===state.maxPlayers?"▶ Почати гру":"Очікуємо всіх гравців";
+  $("lobbyStatus").textContent=state.phase!=="lobby"?(state.status||"Гру розпочато."):(state.isHost?"Ти ведучий. Коли всі приєднаються, натисни «Почати гру».":"Очікуємо, поки ведучий почне гру.");
   $("waitingPlayers").innerHTML="<strong>👥 Учасники кімнати ("+state.players.length+"/"+state.maxPlayers+")</strong><br>"+
     state.players.map((p,i)=>'<div style="padding:8px 0;border-bottom:1px solid #3e5542">'+(i+1)+". "+esc(p.name)+(p.id===state.hostId?' 👑 <span class="muted">Ведучий</span>':"")+(p.eliminated?" — виключений":' <span class="muted">• у кімнаті</span>')+"</div>").join("")+
     (state.players.length<state.maxPlayers?'<p class="muted">Ще очікуємо '+(state.maxPlayers-state.players.length)+" гравців.</p>":"<p>✅ Усі гравці приєдналися!</p>");
