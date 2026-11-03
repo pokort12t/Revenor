@@ -10,19 +10,57 @@
 <section id="lobby" class="hidden">
 <div class="card"><h2>🏚️ Кімната очікування</h2><div id="codeView" class="code"></div><p class="muted" style="text-align:center">Надішли цей код друзям. Чекаємо на гравців…</p><div id="players"></div><div id="waitingPlayers" class="result" style="margin-top:12px">Очікуємо на гравців…</div><p id="lobbyStatus" class="muted"></p><button id="leaveBtn" class="btn secondary">Вийти з кімнати</button></div>
 </section></main><script src="https://bunker-revenor.onrender.com/socket.io/socket.io.js"></script><script>
-const socket=io("https://bunker-revenor.onrender.com",{transports:["websocket","polling"]});let state=null,selectedVote=null;const $=id=>document.getElementById(id);
-function showLobby(){ $('home').classList.add('hidden');$('lobby').classList.remove('hidden'); }
-function showHome(){ $('home').classList.remove('hidden');$('lobby').classList.add('hidden');state=null; }
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function emitError(msg){alert(msg)}
-$('createBtn').onclick=()=>socket.emit('createRoom',{name:$('hostName').value.trim(),maxPlayers:Number($('maxPlayers').value),capacity:Number($('capacity').value)},handleResponse);
-$('joinBtn').onclick=()=>socket.emit('joinRoom',{name:$('joinName').value.trim(),code:$('roomCode').value.trim()},handleResponse);
-function handleResponse(r){if(!r?.ok){emitError(r?.error||'Не вдалося виконати дію');return}if(r.state){state=r.state;render();showLobby()}}
-socket.on('state',s=>{state=s;render();});socket.on('notice',m=>{if(m) $('gameStatus').textContent=m});
-function render(){if(!state)return;$('codeView').textContent=state.code;$('waitingPlayers').innerHTML='<strong>👥 Учасники кімнати ('+state.players.length+'/'+state.maxPlayers+')</strong><br>'+state.players.map((p,i)=>'<div style="padding:8px 0;border-bottom:1px solid #3e5542">'+(i+1)+'. '+esc(p.name)+(p.id===state.hostId?' 👑 <span class="muted">Ведучий</span>':'')+(p.eliminated?' — виключений':' <span class="muted">• у кімнаті</span>')+'</div>').join('')+(state.players.length<state.maxPlayers?'<p class="muted">Ще очікуємо '+(state.maxPlayers-state.players.length)+' гравців.</p>':'<p>✅ Усі гравці приєдналися!</p>');$('players').innerHTML=state.players.map(p=>'<div class="player"><span>'+esc(p.name)+(p.id===state.hostId?' 👑':'')+(p.eliminated?' <small>— виключений</small>':'')+'</span>'+(state.isHost&&p.id!==state.meId&&!p.eliminated?'<button class="btn secondary kick" data-id="'+esc(p.id)+'" style="width:auto;margin:0;padding:7px 10px">Вигнати</button>':'')+'</div>').join('');
-document.querySelectorAll('.kick').forEach(b=>b.onclick=()=>{if(confirm('Вигнати гравця з кімнати?'))socket.emit('kick',{targetId:b.dataset.id},r=>{if(!r.ok)emitError(r.error)})});
-
-$('leaveBtn').onclick=()=>{socket.emit('leaveRoom');showHome()};
-socket.on('kicked',()=>{alert('Тебе вигнали з кімнати.');showHome()});socket.on('connect_error',()=>{ const el=$('lobbyStatus'); if(el)el.textContent='Не вдалося підключитися до сервера. Перевір адресу гри або спробуй відкрити її в Safari.'; });
-socket.on('connect',()=>{ const el=$('lobbyStatus'); if(el && !state)el.textContent='З’єднання із сервером встановлено. Створи кімнату або введи код.'; });
+const socket=io("https://bunker-revenor.onrender.com",{transports:["websocket","polling"]});
+let state=null;
+const $=id=>document.getElementById(id);
+function showLobby(){ $("home").classList.add("hidden");$("lobby").classList.remove("hidden"); }
+function showHome(){ $("home").classList.remove("hidden");$("lobby").classList.add("hidden");state=null; }
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function emitError(msg){alert(msg||"Сталася помилка.");}
+function handleResponse(r){
+  if(!r||!r.ok){emitError(r?.error||"Сервер не відповів. Спробуй ще раз.");return;}
+  if(r.state){state=r.state;showLobby();render();}
+}
+$("createBtn").addEventListener("click",()=>{
+  const name=$("hostName").value.trim();
+  const maxPlayers=Number($("maxPlayers").value);
+  const capacity=Number($("capacity").value);
+  if(!name){emitError("Введи своє ім’я.");return;}
+  if(!Number.isInteger(maxPlayers)||maxPlayers<1||maxPlayers>20){emitError("Кількість гравців має бути від 1 до 20.");return;}
+  if(!Number.isInteger(capacity)||capacity<1||capacity>maxPlayers){emitError("Кількість місць у бункері має бути від 1 до кількості гравців.");return;}
+  if(!socket.connected){emitError("Немає з’єднання із сервером. Зачекай кілька секунд і спробуй ще раз.");return;}
+  $("createBtn").disabled=true;
+  socket.timeout(10000).emit("createRoom",{name,maxPlayers,capacity},(err,r)=>{
+    $("createBtn").disabled=false;
+    if(err){emitError("Сервер не відповів. Онови сторінку та спробуй ще раз.");return;}
+    handleResponse(r);
+  });
+});
+$("joinBtn").addEventListener("click",()=>{
+  const name=$("joinName").value.trim(),code=$("roomCode").value.trim();
+  if(!name||!code){emitError("Введи ім’я та код кімнати.");return;}
+  if(!socket.connected){emitError("Немає з’єднання із сервером. Спробуй ще раз.");return;}
+  $("joinBtn").disabled=true;
+  socket.timeout(10000).emit("joinRoom",{name,code},(err,r)=>{
+    $("joinBtn").disabled=false;
+    if(err){emitError("Сервер не відповів. Спробуй ще раз.");return;}
+    handleResponse(r);
+  });
+});
+function render(){
+  if(!state)return;
+  $("codeView").textContent=state.code;
+  $("waitingPlayers").innerHTML="<strong>👥 Учасники кімнати ("+state.players.length+"/"+state.maxPlayers+")</strong><br>"+
+    state.players.map((p,i)=>'<div style="padding:8px 0;border-bottom:1px solid #3e5542">'+(i+1)+". "+esc(p.name)+(p.id===state.hostId?' 👑 <span class="muted">Ведучий</span>':"")+(p.eliminated?" — виключений":' <span class="muted">• у кімнаті</span>')+"</div>").join("")+
+    (state.players.length<state.maxPlayers?'<p class="muted">Ще очікуємо '+(state.maxPlayers-state.players.length)+" гравців.</p>":"<p>✅ Усі гравці приєдналися!</p>");
+  $("players").innerHTML=state.players.map(p=>'<div class="player"><span>'+esc(p.name)+(p.id===state.hostId?" 👑":"")+(p.eliminated?" <small>— виключений</small>":"")+"</span>"+(state.isHost&&p.id!==state.meId&&!p.eliminated?'<button class="btn secondary kick" data-id="'+esc(p.id)+'" style="width:auto;margin:0;padding:7px 10px">Вигнати</button>':"")+"</div>").join("");
+  document.querySelectorAll(".kick").forEach(b=>b.onclick=()=>{
+    if(confirm("Вигнати гравця з кімнати?"))socket.emit("kick",{targetId:b.dataset.id},r=>{if(!r?.ok)emitError(r?.error);});
+  });
+}
+$("leaveBtn").addEventListener("click",()=>{socket.emit("leaveRoom");showHome();});
+socket.on("state",s=>{state=s;showLobby();render();});
+socket.on("kicked",()=>{alert("Тебе вигнали з кімнати.");showHome();});
+socket.on("connect",()=>{const el=$("lobbyStatus");if(el)el.textContent="З’єднання із сервером встановлено.";});
+socket.on("connect_error",()=>{const el=$("lobbyStatus");if(el)el.textContent="Не вдалося підключитися до сервера. Перевір інтернет і спробуй оновити сторінку.";});
 </script></body></html>
