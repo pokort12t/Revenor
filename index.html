@@ -50,6 +50,11 @@ $("joinBtn").addEventListener("click",()=>{
 function render(){
   if(!state)return;
   $("codeView").textContent=state.code;
+  const gameStarted=state.phase!=="lobby";
+  $("catastrophePanel").classList.toggle("hidden",!gameStarted||!state.catastrophe);
+  $("catastropheText").textContent=state.catastrophe||"";
+  $("waitingPlayers").classList.toggle("hidden",gameStarted);
+  $("players").classList.toggle("hidden",gameStarted);
   const startBtn=$("startBtn");
   startBtn.classList.toggle("hidden",!state.isHost||state.phase!=="lobby");
   startBtn.disabled=state.players.length!==state.maxPlayers;
