@@ -8,7 +8,7 @@
 <div class="card"><h2>🔑 Приєднатися</h2><label>Твоє ім’я</label><input id="joinName" maxlength="20" placeholder="Введи ім’я"><label style="margin-top:10px">Код кімнати</label><input id="roomCode" maxlength="6" placeholder="6-значний код" inputmode="numeric"><button class="btn secondary" id="joinBtn">Увійти за кодом</button></div>
 <p class="muted">Потрібне інтернет-з’єднання. Усі гравці мають відкрити гру та підключитися до однієї кімнати.</p></section>
 <section id="lobby" class="hidden">
-<div class="card"><h2>🏚️ Кімната очікування</h2><div id="codeView" class="code"></div><p class="muted" style="text-align:center">Надішли цей код друзям. Чекаємо на гравців…</p><div id="players"></div><div id="waitingPlayers" class="result" style="margin-top:12px">Очікуємо на гравців…</div><p id="lobbyStatus" class="muted"></p><button id="leaveBtn" class="btn secondary">Вийти з кімнати</button></div>
+<div class="card"><h2>🏚️ Кімната очікування</h2><div id="codeView" class="code"></div><p class="muted" style="text-align:center">Надішли цей код друзям. Чекаємо на гравців…</p><div id="players"></div><div id="waitingPlayers" class="result" style="margin-top:12px">Очікуємо на гравців…</div><p id="lobbyStatus" class="muted"></p><button id="startBtn" class="btn">▶ Почати гру</button><button id="leaveBtn" class="btn secondary">Вийти з кімнати</button></div>
 </section></main><script src="https://bunker-revenor.onrender.com/socket.io/socket.io.js"></script><script>
 const socket=io("https://bunker-revenor.onrender.com",{transports:["websocket","polling"]});
 let state=null;
@@ -49,7 +49,7 @@ $("joinBtn").addEventListener("click",()=>{
 });
 function render(){
   if(!state)return;
-  $("codeView").textContent=state.code;
+  $("codeView").textContent=state.code;\n  const startBtn=$("startBtn");\n  startBtn.classList.toggle("hidden",!state.isHost||state.phase!=="lobby");\n  startBtn.disabled=state.players.length!==state.maxPlayers;\n  startBtn.textContent=state.players.length===state.maxPlayers?"▶ Почати гру":"Очікуємо всіх гравців";\n  $("lobbyStatus").textContent=state.phase!=="lobby"?(state.status||"Гру розпочато."):(state.isHost?"Ти ведучий. Коли всі приєднаються, натисни «Почати гру».":"Очікуємо, поки ведучий почне гру.");
   $("waitingPlayers").innerHTML="<strong>👥 Учасники кімнати ("+state.players.length+"/"+state.maxPlayers+")</strong><br>"+
     state.players.map((p,i)=>'<div style="padding:8px 0;border-bottom:1px solid #3e5542">'+(i+1)+". "+esc(p.name)+(p.id===state.hostId?' 👑 <span class="muted">Ведучий</span>':"")+(p.eliminated?" — виключений":' <span class="muted">• у кімнаті</span>')+"</div>").join("")+
     (state.players.length<state.maxPlayers?'<p class="muted">Ще очікуємо '+(state.maxPlayers-state.players.length)+" гравців.</p>":"<p>✅ Усі гравці приєдналися!</p>");
@@ -58,7 +58,21 @@ function render(){
     if(confirm("Вигнати гравця з кімнати?"))socket.emit("kick",{targetId:b.dataset.id},r=>{if(!r?.ok)emitError(r?.error);});
   });
 }
-$("leaveBtn").addEventListener("click",()=>{socket.emit("leaveRoom");showHome();});
+$("startBtn").addEventListener("click",()=>{
+  if(!state||!state.isHost)return;
+  if(state.players.length!==state.maxPlayers){emitError("Дочекайся всіх гравців.");return;}
+  $("startBtn").disabled=true;
+  socket.timeout(10000).emit("startGame",{},(err,r)=>{
+    if(err){$("startBtn").disabled=false;emitError("Сервер не відповів. Спробуй ще раз.");return;}
+    if(!r?.ok){$("startBtn").disabled=false;emitError(r?.error||"Не вдалося почати гру.");}
+  });
+});
+$("leaveBtn").addEventListener("click",()=>{
+  if(!confirm("Точно хочеш вийти з кімнати?"+(state?.isHost?"\nЯкщо ти ведучий, кімната закриється для всіх гравців.":"")))return;
+  socket.emit("leaveRoom");
+  showHome();
+});
+socket.on("roomClosed",()=>{alert("Ведучий вийшов. Кімнату закрито для всіх.");showHome();});
 socket.on("state",s=>{state=s;showLobby();render();});
 socket.on("kicked",()=>{alert("Тебе вигнали з кімнати.");showHome();});
 socket.on("connect",()=>{const el=$("lobbyStatus");if(el)el.textContent="З’єднання із сервером встановлено.";});
