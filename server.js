@@ -38,11 +38,11 @@ const sample=(arr,n)=>{const copy=[...arr];const out=[];while(out.length<n&&copy
 function generateBunker(){const hasFarm=Math.random()<0.5;return {entertainment:sample(entertainments,1+Math.floor(Math.random()*3)),food:pick(foodStocks),warehouse:sample(warehouseItems,3+Math.floor(Math.random()*5)),hasFarm,farm:hasFarm?pick(farmTypes):null};}
 const bags=['аптечка','ніж і кресало','запас консервів','фільтр для води','рація','ліхтар і батарейки','інструменти','насіння рослин','мотузка та карабіни','протигаз'];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const genders=['чоловік','жінка'];
+const genders=['чоловік','жінка','трансгендерний чоловік','трансгендерна жінка','небінарна людина','гендерквірна людина','гендерфлюїдна людина','агендерна людина','бігендерна людина','інша гендерна ідентичність'];
 const healthStates=['цілком здоровий','легка травма','хронічна хвороба','слабкий імунітет','має алергію'];
 const skills=['перша допомога','ремонт обладнання','вирощування їжі','приготування їжі','будівництво','пошук води','догляд за тваринами','організація людей','робота з електрикою','орієнтування на місцевості'];
 const phobias=['клаустрофобія','боязнь темряви','боязнь висоти','боязнь крові','боязнь комах','немає вираженої фобії'];
-function character(){return {gender:pick(genders),age:18+Math.floor(Math.random()*53),profession:pick(jobs),hobby:pick(hobbies),trait:pick(traits),health:pick(healthStates),skill:pick(skills),phobia:pick(phobias),bag:pick(bags),secret:pick(['має прихований запас їжі','боїться темряви','колись працював у лабораторії','вміє лагодити радіо','не довіряє незнайомцям','знає маршрут до старого сховища'])}}
+function character(){return {gender:pick(genders),age:18+Math.floor(Math.random()*30),profession:pick(jobs),hobby:pick(hobbies),trait:pick(traits),health:pick(healthStates),skill:pick(skills),phobia:pick(phobias),bag:pick(bags),secret:pick(['має прихований запас їжі','боїться темряви','колись працював у лабораторії','вміє лагодити радіо','не довіряє незнайомцям','знає маршрут до старого сховища'])}}
 function publicState(room,sid){return {code:room.code,hostId:room.hostId,meId:sid,maxPlayers:room.maxPlayers,capacity:room.capacity,players:[...room.players.values()].map(p=>({id:p.id,name:p.name,eliminated:p.eliminated,character:p.character})),phase:room.phase,catastrophe:room.catastrophe,bunker:room.bunker,status:room.status,myVote:room.votes.has(sid),votesCount:room.votes.size,round:room.round,isHost:room.hostId===sid};}
 function broadcast(room){for(const p of room.players.values())io.to(p.id).emit('state',publicState(room,p.id))}
 function response(socket,room,cb){if(cb)cb({ok:true,state:publicState(room,socket.id)})}
