@@ -65,7 +65,7 @@ function render(){
     $("charactersList").innerHTML=state.players.map(p=>{
       const c=p.character||{};
       return '<div class="result" style="margin:10px 0"><strong>'+esc(p.name)+(p.eliminated?' — НЕ ДОПУЩЕНИЙ':'')+'</strong><br>'+
-        'Стать: '+esc(c.gender||'—')+'<br>Вік: '+esc(c.age??'—')+' років<br>Професія: '+esc(c.profession||'—')+'<br>Хобі: '+esc(c.hobby||'—')+'<br>Характер: '+esc(c.trait||'—')+'<br>Здоров’я: '+esc(c.health||'—')+'<br>Навичка: '+esc(c.skill||'—')+'<br>Страх: '+esc(c.phobia||'—')+'<br>Рюкзак: '+esc(c.bag||'—')+'<br>Таємний факт: '+esc(c.secret||'—')+
+        'Стать: '+esc(c.gender||'—')+(c.biologicalSex?' ('+esc(c.biologicalSex)+')':'')+'<br>Вік: '+esc(c.age??'—')+' років<br>Професія: '+esc(c.profession||'—')+'<br>Хобі: '+esc(c.hobby||'—')+'<br>Характер: '+esc(c.trait||'—')+'<br>Здоров’я: '+esc(c.health||'—')+'<br>Навичка: '+esc(c.skill||'—')+'<br>Страх: '+esc(c.phobia||'—')+'<br>Рюкзак: '+esc(c.bag||'—')+'<br>Таємний факт: '+esc(c.secret||'—')+
         (state.phase==="voting"&&!p.eliminated&&p.id!==state.meId&&!state.myVote?'<button class="btn secondary vote" data-id="'+esc(p.id)+'">Голосувати проти</button>':'')+
         (p.eliminated?'<p class="muted">Ця людина не потрапляє до бункера.</p>':'')+'</div>';
     }).join("");
