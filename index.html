@@ -57,7 +57,7 @@ function render(){
   $("bunkerPanel").classList.toggle("hidden",!showBunker||!state.bunker);
   if(state.bunker){
     const b=state.bunker;
-    $("bunkerText").textContent="🎭 Розваги:\\n"+b.entertainment.join(", ")+"\\n\\n🍲 Запас їжі:\\n"+b.food+"\\n\\n📦 Склад:\\n"+b.warehouse.map(x=>"• "+x).join("\\n")+"\\n\\n🌱 Ферма:\\n"+(b.hasFarm?"Є — "+b.farm:"Немає");
+    $("bunkerText").textContent="🎭 Розваги:\n"+b.entertainment.join(", ")+"\n\n🍲 Запас їжі:\n"+b.food+"\n\n📦 Склад:\n"+b.warehouse.map(x=>"• "+x).join("\n")+"\n\n🌱 Ферма:\n"+(b.hasFarm?"Є — "+b.farm:"Немає");
   }
   $("nextBunkerBtn").classList.toggle("hidden",!state.isHost||state.phase!=="catastrophe");
   $("startVotingBtn").classList.toggle("hidden",!state.isHost||state.phase!=="bunker");
